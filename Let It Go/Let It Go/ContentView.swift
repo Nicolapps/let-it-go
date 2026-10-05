@@ -119,6 +119,11 @@ private struct RedirectTargetField: View {
             .controlSize(.large)
             .focused($isFocused)
             .onSubmit(commit)
+            // There's nothing else to tab to, so focus wouldn't change on its own.
+            .onKeyPress(keys: [.tab, "\u{19}"]) { _ in
+                commit()
+                return .handled
+            }
             .onExitCommand {
                 draft = value
                 isFocused = false
