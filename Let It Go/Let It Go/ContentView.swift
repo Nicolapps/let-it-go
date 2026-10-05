@@ -15,13 +15,15 @@ struct ContentView: View {
     var status: ExtensionStatus
     var openSafariSettings: () -> Void
 
+    @State private var openedSettings = false
+
     var body: some View {
         VStack(spacing: 0) {
             Spacer(minLength: 24)
 
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
-                .frame(width: 176, height: 176)
+                .frame(width: 144, height: 144)
                 .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
             VStack(spacing: 6) {
@@ -31,31 +33,42 @@ struct ContentView: View {
                     .font(.title3)
                     .foregroundStyle(.white.opacity(0.7))
             }
-            .padding(.top, 20)
+            .padding(.top, 16)
 
             Spacer(minLength: 32)
 
-            GlassEffectContainer(spacing: 16) {
-                VStack(spacing: 16) {
-                    StatusPill(isEnabled: status.isEnabled)
-
-                    Button(action: openSafariSettings) {
-                        Label("Open Safari Settings", systemImage: "safari")
-                            .font(.title3.weight(.semibold))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 6)
+            GlassEffectContainer(spacing: 12) {
+                VStack(alignment: .leading, spacing: 22) {
+                    SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
+                        Button {
+                            openedSettings = true
+                            openSafariSettings()
+                        } label: {
+                            Label("Open Safari Settings", systemImage: "safari")
+                                .font(.headline)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.glass)
+                        .controlSize(.extraLarge)
                     }
-                    .buttonStyle(.glass)
-                    .controlSize(.extraLarge)
+
+                    SetupStep(number: 2, isDone: status.isEnabled == true) {
+                        StepText(
+                            title: "Turn on Let It Go",
+                            detail: "Tick its checkbox in the Extensions tab."
+                        )
+                    }
+
+                    SetupStep(number: 3, isDone: false) {
+                        StepText(
+                            title: "Allow your search engine",
+                            detail: "Click Edit Websites… and set it to Allow."
+                        )
+                    }
                 }
             }
-
-            Text(hint)
-                .font(.callout)
-                .foregroundStyle(.white.opacity(0.6))
-                .multilineTextAlignment(.center)
-                .padding(.top, 14)
-                .contentTransition(.opacity)
+            .frame(width: 300, alignment: .leading)
 
             Spacer(minLength: 28)
         }
@@ -71,33 +84,51 @@ struct ContentView: View {
         }
         .environment(\.colorScheme, .dark)
         .animation(.smooth, value: status.isEnabled)
+        .animation(.smooth, value: openedSettings)
     }
+}
 
-    private var hint: String {
-        switch status.isEnabled {
-        case true?: "You’re all set. Type go/ in Safari’s address bar."
-        case false?: "Turn on Let It Go in the Extensions section."
-        case nil: " "
+/// One row of the setup checklist: a numbered glass badge that turns into a
+/// checkmark once the step is done.
+private struct SetupStep<Content: View>: View {
+    var number: Int
+    var isDone: Bool
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                if isDone {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.mint)
+                        .transition(.scale.combined(with: .opacity))
+                } else {
+                    Text("\(number)")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .frame(width: 32, height: 32)
+            .glassEffect(.clear, in: .circle)
+
+            content
         }
     }
 }
 
-private struct StatusPill: View {
-    var isEnabled: Bool?
+private struct StepText: View {
+    var title: String
+    var detail: String
 
     var body: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(isEnabled == true ? Color.mint : Color.white.opacity(0.45))
-                .frame(width: 8, height: 8)
-                .shadow(color: isEnabled == true ? .mint : .clear, radius: 4)
-            Text(isEnabled == true ? "Extension is on" : "Extension is off")
-                .font(.callout.weight(.medium))
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.headline)
+            Text(detail)
+                .font(.callout)
+                .foregroundStyle(.white.opacity(0.65))
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 7)
-        .glassEffect(.clear, in: .capsule)
-        .opacity(isEnabled == nil ? 0 : 1)
     }
 }
 
@@ -179,12 +210,12 @@ private extension Color {
     let status = ExtensionStatus()
     status.isEnabled = false
     return ContentView(status: status, openSafariSettings: {})
-        .frame(width: 440, height: 560)
+        .frame(width: 440, height: 600)
 }
 
 #Preview("On") {
     let status = ExtensionStatus()
     status.isEnabled = true
     return ContentView(status: status, openSafariSettings: {})
-        .frame(width: 440, height: 560)
+        .frame(width: 440, height: 600)
 }
