@@ -61,7 +61,7 @@ struct ContentView: View {
 
                     SetupStep(number: 2, isDone: status.isEnabled == true) {
                         StepText("Select the checkbox next to *Let It Go*") {
-                            SafariSnippet(action: openSettings) {
+                            SafariSnippet {
                                 // Measured on Safari's list: a 16 pt checkbox, 6 pt gap, icon
                                 // artwork 28 pt wide (the image has transparent margins, so
                                 // its frame is 34 pt), then 13 pt text 7 pt further.
@@ -81,7 +81,7 @@ struct ContentView: View {
                     // with step 4.
                     SetupStep(number: 3, isDone: allowsSearchEngine) {
                         StepText("Click *Edit Websites…*") {
-                            SafariSnippet(action: openSettings) {
+                            SafariSnippet {
                                 ReplicaButton { Text("Edit Websites…") }
                             }
                         }
@@ -89,7 +89,7 @@ struct ContentView: View {
 
                     SetupStep(number: 4, isDone: allowsSearchEngine) {
                         StepText("Choose *Allow* for your search engine") {
-                            SafariSnippet(action: openSettings) {
+                            SafariSnippet {
                                 HStack(spacing: 6) {
                                     // Safari shows the site's favicon once it has one.
                                     Image(.googleLogo)
@@ -335,12 +335,14 @@ private struct StepText<Snippet: View>: View {
 
 /// A cut-out of Safari Settings showing a control in the state it should end up
 /// in. It follows the system appearance like Safari does, even though this
-/// window is always dark, and clicking it opens Safari Settings.
+/// window is always dark. Clicking it blurs the replica for a moment behind a
+/// reminder that the real control is in Safari.
 private struct SafariSnippet<Content: View>: View {
-    var action: () -> Void
     @ViewBuilder var content: Content
 
     @State private var appearance = SystemAppearance()
+    @State private var showsHint = false
+    @State private var hintCount = 0
 
     var body: some View {
         let isDark = appearance.isDark
@@ -348,16 +350,41 @@ private struct SafariSnippet<Content: View>: View {
             .font(.system(size: 13))
             .foregroundStyle(isDark ? .white.opacity(0.9) : .black.opacity(0.85))
             .environment(\.colorScheme, isDark ? .dark : .light)
+            .blur(radius: showsHint ? 6 : 0)
+            .opacity(showsHint ? 0.35 : 1)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+            .overlay {
+                if showsHint {
+                    Label("Just a preview — do this in Safari", systemImage: "safari")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(isDark ? .white : .black.opacity(0.85))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .padding(.horizontal, 12)
+                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                }
+            }
             .background(isDark ? Color(hex: 0x1E1E22).opacity(0.85) : .white, in: .rect(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(isDark ? .white.opacity(0.12) : .black.opacity(0.08))
             }
             .contentShape(.rect)
-            .onTapGesture(perform: action)
+            .onTapGesture {
+                showsHint = true
+                hintCount += 1
+            }
+            // Each click restarts the countdown.
+            .task(id: hintCount) {
+                guard showsHint else { return }
+                do {
+                    try await Task.sleep(for: .seconds(2.5))
+                    showsHint = false
+                } catch {}
+            }
+            .animation(.smooth(duration: 0.3), value: showsHint)
     }
 }
 
