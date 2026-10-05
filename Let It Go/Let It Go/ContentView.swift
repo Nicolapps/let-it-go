@@ -91,10 +91,13 @@ struct ContentView: View {
                         StepText("Choose *Allow* for your search engine") {
                             SafariSnippet {
                                 HStack(spacing: 6) {
-                                    // Safari shows the site's favicon once it has one.
+                                    // Safari shows the site's favicon once it has one, inset
+                                    // on a white disc.
                                     Image(.googleLogo)
                                         .resizable()
+                                        .frame(width: 11, height: 11)
                                         .frame(width: 16, height: 16)
+                                        .background(.white, in: .circle)
                                     Text("google.com")
                                     Spacer()
                                     ReplicaButton {
