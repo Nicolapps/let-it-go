@@ -2,46 +2,401 @@
   {
     "id": 1,
     "priority": 1,
-    "action": { "type": "redirect", "redirect": { "regexSubstitution": "http://go/\\1" } },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1"
+      }
+    },
     "condition": {
       "regexFilter": "^https://www\\.google\\.com/search.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
-      "resourceTypes": ["main_frame"]
+      "resourceTypes": [
+        "main_frame"
+      ]
     }
   },
   {
     "id": 2,
     "priority": 1,
-    "action": { "type": "redirect", "redirect": { "regexSubstitution": "http://go/\\1" } },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2"
+      }
+    },
     "condition": {
-      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
-      "resourceTypes": ["main_frame"]
+      "regexFilter": "^https://www\\.google\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
     }
   },
   {
     "id": 3,
     "priority": 1,
-    "action": { "type": "redirect", "redirect": { "regexSubstitution": "http://go/\\1" } },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3"
+      }
+    },
     "condition": {
-      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
-      "resourceTypes": ["main_frame"]
+      "regexFilter": "^https://www\\.google\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
     }
   },
   {
     "id": 4,
     "priority": 1,
-    "action": { "type": "redirect", "redirect": { "regexSubstitution": "http://go/\\1" } },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4"
+      }
+    },
     "condition": {
-      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)(&.*)?$",
-      "resourceTypes": ["main_frame"]
+      "regexFilter": "^https://www\\.google\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
     }
   },
   {
     "id": 5,
     "priority": 1,
-    "action": { "type": "redirect", "redirect": { "regexSubstitution": "http://go/\\1" } },
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4/\\5"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.google\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 8,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 9,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4/\\5"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.bing\\.com/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4/\\5"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://duckduckgo\\.com/.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 16,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 17,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 18,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 19,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 20,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4/\\5"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://search\\.yahoo\\.com/search.*[?&]p=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1"
+      }
+    },
     "condition": {
       "regexFilter": "^https://www\\.ecosia\\.org/search.*[?&]q=go%2F([^&+%#]+)(&.*)?$",
-      "resourceTypes": ["main_frame"]
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 22,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.ecosia\\.org/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 23,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.ecosia\\.org/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 24,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.ecosia\\.org/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 25,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "http://go/\\1/\\2/\\3/\\4/\\5"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://www\\.ecosia\\.org/search.*[?&]q=go%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)%2F([^&+%#]+)(&.*)?$",
+      "resourceTypes": [
+        "main_frame"
+      ]
     }
   }
 ]

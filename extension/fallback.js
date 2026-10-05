@@ -1,5 +1,6 @@
-// Catches the go/ searches that rules.json can't redirect, e.g. go/foo/bar,
-// which arrives as q=go%2Ffoo%2Fbar and needs decoding first.
+// Catches the go/ searches that rules.json can't redirect: links deeper than
+// its rules go, or with other encoded characters, e.g. go/foo?x=1, which
+// arrives as q=go%2Ffoo%3Fx%3D1 and needs decoding first.
 
 const GOLINK_PREFIX = "go";
 

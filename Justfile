@@ -32,6 +32,11 @@ lint:
     node --check extension/fallback.js
     node --check extension/background.js
     node -e 'for (const r of require("./extension/rules.json")) new RegExp(r.condition.regexFilter)'
+    node scripts/generate-rules.js --check
+
+# Regenerate extension/rules.json from scripts/generate-rules.js
+rules:
+    node scripts/generate-rules.js
 
 # Show where a search URL would be redirected by rules.json
 try url:
