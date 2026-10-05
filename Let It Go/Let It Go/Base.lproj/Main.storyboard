@@ -48,6 +48,18 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="File" id="Fl0-aB-c01">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="File" id="Fl0-aB-c02">
+                                    <items>
+                                        <menuItem title="Close" keyEquivalent="w" id="Cl0-aB-c01">
+                                            <connections>
+                                                <action selector="performClose:" target="Ady-hI-5gd" id="Cl0-aB-c02"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Edit" id="LgE-dt-M3n">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Edit" id="Ed1-tM-nU0">
@@ -92,6 +104,25 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Window" id="Wn0-aB-c01">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Window" systemMenu="window" id="Wn0-aB-c02">
+                                    <items>
+                                        <menuItem title="Minimize" keyEquivalent="m" id="Mn0-aB-c01">
+                                            <connections>
+                                                <action selector="performMiniaturize:" target="Ady-hI-5gd" id="Mn0-aB-c02"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Sp1-aB-c01"/>
+                                        <menuItem title="Bring All to Front" id="Bf0-aB-c01">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="arrangeInFront:" target="Ady-hI-5gd" id="Bf0-aB-c02"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Help" id="wpr-3q-Mcd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
@@ -121,7 +152,7 @@
             <objects>
                 <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" sceneMemberID="viewController">
                     <window key="window" title="Let It Go" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" id="IQv-IB-iLA">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
                         <rect key="contentRect" x="196" y="240" width="440" height="720"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
