@@ -24,7 +24,7 @@ struct ContentView: View {
 
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
-                .frame(width: 144, height: 144)
+                .frame(width: 112, height: 112)
                 .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
             VStack(spacing: 14) {
@@ -46,10 +46,7 @@ struct ContentView: View {
             GlassEffectContainer(spacing: 12) {
                 VStack(alignment: .leading, spacing: 22) {
                     SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
-                        Button {
-                            openedSettings = true
-                            openSafariSettings()
-                        } label: {
+                        Button(action: openSettings) {
                             Label("Open Safari Settings", systemImage: "safari")
                                 .font(.headline)
                                 .padding(.horizontal, 6)
@@ -60,21 +57,52 @@ struct ContentView: View {
                     }
 
                     SetupStep(number: 2, isDone: status.isEnabled == true) {
-                        StepText(
-                            title: "Turn on Let It Go",
-                            detail: "Tick its checkbox in the Extensions tab."
-                        )
+                        StepText("In Extensions, tick Let It Go") {
+                            SafariSnippet(action: openSettings) {
+                                Toggle(isOn: .constant(true)) {
+                                    HStack(spacing: 6) {
+                                        Image(nsImage: NSApp.applicationIconImage)
+                                            .resizable()
+                                            .frame(width: 20, height: 20)
+                                        Text("Let It Go")
+                                    }
+                                }
+                                .toggleStyle(.checkbox)
+                            }
+                        }
                     }
 
                     SetupStep(number: 3, isDone: false) {
-                        StepText(
-                            title: "Allow your search engine",
-                            detail: "Click Edit Websites… and set it to Allow."
-                        )
+                        StepText("Then click Edit Websites…") {
+                            SafariSnippet(action: openSettings) {
+                                Button("Edit Websites…") {}
+                                    .buttonStyle(.bordered)
+                            }
+                        }
+                    }
+
+                    SetupStep(number: 4, isDone: false) {
+                        StepText("Set your search engine to Allow") {
+                            SafariSnippet(action: openSettings) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "globe")
+                                        .foregroundStyle(.secondary)
+                                    Text("google.com")
+                                    Spacer()
+                                    Picker("", selection: .constant("Allow")) {
+                                        Text("Ask").tag("Ask")
+                                        Text("Deny").tag("Deny")
+                                        Text("Allow").tag("Allow")
+                                    }
+                                    .labelsHidden()
+                                    .fixedSize()
+                                }
+                            }
+                        }
                     }
                 }
             }
-            .frame(width: 300, alignment: .leading)
+            .frame(width: 320, alignment: .leading)
 
             Spacer(minLength: 28)
         }
@@ -96,6 +124,11 @@ struct ContentView: View {
         .environment(\.colorScheme, .dark)
         .animation(.smooth, value: status.isEnabled)
         .animation(.smooth, value: openedSettings)
+    }
+
+    private func openSettings() {
+        openedSettings = true
+        openSafariSettings()
     }
 }
 
@@ -214,7 +247,7 @@ private struct SetupStep<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(alignment: .top, spacing: 14) {
             ZStack {
                 if isDone {
                     Image(systemName: "checkmark")
@@ -235,18 +268,48 @@ private struct SetupStep<Content: View>: View {
     }
 }
 
-private struct StepText: View {
+/// A step's instruction above a replica of the Safari Settings control it
+/// refers to.
+private struct StepText<Snippet: View>: View {
     var title: String
-    var detail: String
+    @ViewBuilder var snippet: Snippet
+
+    init(_ title: String, @ViewBuilder snippet: () -> Snippet) {
+        self.title = title
+        self.snippet = snippet()
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.headline)
-            Text(detail)
-                .font(.callout)
-                .foregroundStyle(.white.opacity(0.65))
+                .frame(minHeight: 32)
+            snippet
         }
+    }
+}
+
+/// A cut-out of Safari Settings showing a control in the state it should end up
+/// in. The controls inside are real so they look exactly like Safari's, but
+/// clicking anywhere on the snippet opens Safari Settings instead.
+private struct SafariSnippet<Content: View>: View {
+    var action: () -> Void
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content
+            .font(.body)
+            .allowsHitTesting(false)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(hex: 0x1E1E22).opacity(0.85), in: .rect(cornerRadius: 10))
+            .overlay {
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(.white.opacity(0.12))
+            }
+            .contentShape(.rect)
+            .onTapGesture(perform: action)
     }
 }
 
@@ -328,12 +391,12 @@ private extension Color {
     let status = ExtensionStatus()
     status.isEnabled = false
     return ContentView(status: status, openSafariSettings: {})
-        .frame(width: 440, height: 600)
+        .frame(width: 440, height: 720)
 }
 
 #Preview("On") {
     let status = ExtensionStatus()
     status.isEnabled = true
     return ContentView(status: status, openSafariSettings: {})
-        .frame(width: 440, height: 600)
+        .frame(width: 440, height: 720)
 }
