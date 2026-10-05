@@ -35,10 +35,7 @@ struct ContentView: View {
                 HStack(spacing: 8) {
                     Text("Redirect go/ to")
                         .foregroundStyle(.white.opacity(0.75))
-                    TextField("http://go", text: $redirectBase)
-                        .textFieldStyle(.roundedBorder)
-                        .controlSize(.large)
-                        .frame(width: 170)
+                    RedirectTargetField(value: $redirectBase)
                 }
                 .font(.title3)
             }
@@ -90,10 +87,96 @@ struct ContentView: View {
                 Snowfall()
             }
             .ignoresSafeArea()
+            // Clicking anywhere else ends an edit of the redirect target.
+            .onTapGesture { NSApp.keyWindow?.makeFirstResponder(nil) }
         }
         .environment(\.colorScheme, .dark)
         .animation(.smooth, value: status.isEnabled)
         .animation(.smooth, value: openedSettings)
+    }
+}
+
+/// The redirect target, shown as a glass pill that turns into a text field when
+/// clicked. Return or clicking away saves, Escape puts the old value back, and a
+/// checkmark confirms the save. Nothing here takes keyboard focus on launch.
+private struct RedirectTargetField: View {
+    @Binding var value: String
+
+    @State private var draft = ""
+    @State private var isEditing = false
+    @State private var saveCount = 0
+    @State private var justSaved = false
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Group {
+                if isEditing {
+                    TextField("http://go", text: $draft)
+                        .textFieldStyle(.plain)
+                        .focused($isFocused)
+                        .onAppear { isFocused = true }
+                        .onSubmit(commit)
+                        .onExitCommand(perform: cancel)
+                } else {
+                    Text(value)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: justSaved ? "checkmark" : isEditing ? "return" : "pencil")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(justSaved ? AnyShapeStyle(.mint) : AnyShapeStyle(.white.opacity(0.55)))
+                .contentTransition(.symbolEffect(.replace))
+        }
+        .padding(.horizontal, 14)
+        .frame(width: 200, height: 36)
+        .contentShape(.capsule)
+        .glassEffect(isEditing ? .regular.tint(.white.opacity(0.06)) : .clear, in: .capsule)
+        .overlay(alignment: .bottom) {
+            Text("Saved. Safari picks it up next time you switch to it.")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.6))
+                .fixedSize()
+                .offset(y: 24)
+                .opacity(justSaved ? 1 : 0)
+        }
+        .gesture(TapGesture().onEnded(beginEditing), isEnabled: !isEditing)
+        .pointerStyle(isEditing ? nil : .horizontalText)
+        .accessibilityAddTraits(isEditing ? [] : .isButton)
+        .onChange(of: isFocused) { _, focused in
+            if !focused && isEditing { commit() }
+        }
+        .task(id: saveCount) {
+            guard justSaved else { return }
+            do {
+                try await Task.sleep(for: .seconds(2.5))
+                justSaved = false
+            } catch {}
+        }
+        .animation(.smooth(duration: 0.25), value: isEditing)
+        .animation(.smooth(duration: 0.3), value: justSaved)
+    }
+
+    private func beginEditing() {
+        draft = value
+        justSaved = false
+        isEditing = true
+    }
+
+    private func commit() {
+        isEditing = false
+        let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed != value else { return }
+        value = trimmed
+        justSaved = true
+        saveCount += 1
+    }
+
+    private func cancel() {
+        isEditing = false
     }
 }
 
