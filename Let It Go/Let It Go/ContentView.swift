@@ -16,7 +16,7 @@ struct ContentView: View {
     var openSafariSettings: () -> Void
 
     @State private var openedSettings = false
-    @AppStorage("redirectBase") private var redirectBase = "http://go"
+    @AppStorage("redirectBase", store: UserDefaults(suiteName: appGroup)) private var redirectBase = "http://go"
 
     var body: some View {
         VStack(spacing: 0) {

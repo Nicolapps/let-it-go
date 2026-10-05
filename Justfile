@@ -29,6 +29,7 @@ install: (build "Release") quit
 lint:
     jq empty extension/manifest.json extension/rules.json
     node --check extension/fallback.js
+    node --check extension/background.js
     node -e 'for (const r of require("./extension/rules.json")) new RegExp(r.condition.regexFilter)'
 
 # Show where a search URL would be redirected by rules.json

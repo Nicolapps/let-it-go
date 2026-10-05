@@ -10,7 +10,7 @@
     "256": "icons/icon-256.png",
     "512": "icons/icon-512.png"
   },
-  "permissions": ["declarativeNetRequest", "declarativeNetRequestWithHostAccess"],
+  "permissions": ["declarativeNetRequest", "declarativeNetRequestWithHostAccess", "nativeMessaging"],
   "host_permissions": [
     "*://www.google.com/*",
     "*://www.bing.com/*",
@@ -22,6 +22,9 @@
     "rule_resources": [
       { "id": "golinks", "enabled": true, "path": "rules.json" }
     ]
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {

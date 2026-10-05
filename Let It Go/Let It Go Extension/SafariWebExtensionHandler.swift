@@ -8,6 +8,9 @@
 import SafariServices
 import os.log
 
+/// Shared with the app, which stores the redirect target here.
+let appGroup = "W47E2LS5Y9.dev.ettlin.nicolas.letitgo"
+
 class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
     func beginRequest(with context: NSExtensionContext) {
@@ -29,11 +32,14 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         os_log(.default, "Received message from browser.runtime.sendNativeMessage: %@ (profile: %@)", String(describing: message), profile?.uuidString ?? "none")
 
+        // Written by the app's "Redirect go/ to" field.
+        let redirectBase = UserDefaults(suiteName: appGroup)?.string(forKey: "redirectBase")
+
         let response = NSExtensionItem()
         if #available(iOS 15.0, macOS 11.0, *) {
-            response.userInfo = [ SFExtensionMessageKey: [ "echo": message ] ]
+            response.userInfo = [ SFExtensionMessageKey: [ "redirectBase": redirectBase ] ]
         } else {
-            response.userInfo = [ "message": [ "echo": message ] ]
+            response.userInfo = [ "message": [ "redirectBase": redirectBase ] ]
         }
 
         context.completeRequest(returningItems: [ response ], completionHandler: nil)

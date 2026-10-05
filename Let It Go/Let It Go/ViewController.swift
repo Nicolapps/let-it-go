@@ -11,6 +11,9 @@ import SwiftUI
 
 let extensionBundleIdentifier = "dev.ettlin.nicolas.letitgo.extension"
 
+/// Shared with the extension, which reads the redirect target from here.
+let appGroup = "W47E2LS5Y9.dev.ettlin.nicolas.letitgo"
+
 class ViewController: NSViewController {
 
     private let status = ExtensionStatus()

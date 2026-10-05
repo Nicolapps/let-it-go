@@ -19,6 +19,7 @@
 		37B655F530732FF500B9164F /* rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F130732FF500B9164F /* rules.json */; };
 		37B655F630732FF500B9164F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F230732FF500B9164F /* manifest.json */; };
 		37B655F730732FF500B9164F /* fallback.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F330732FF500B9164F /* fallback.js */; };
+		37B655FC30732FF500B9164F /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655FD30732FF500B9164F /* background.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,9 @@
 		37B655F130732FF500B9164F /* rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = rules.json; path = ../../extension/rules.json; sourceTree = "<group>"; };
 		37B655F230732FF500B9164F /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../extension/manifest.json; sourceTree = "<group>"; };
 		37B655F330732FF500B9164F /* fallback.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = fallback.js; path = ../../extension/fallback.js; sourceTree = "<group>"; };
+		37B655FD30732FF500B9164F /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = ../../extension/background.js; sourceTree = "<group>"; };
+		37B655FE30732FF500B9164F /* Let It Go.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go.entitlements"; sourceTree = "<group>"; };
+		37B655FF30732FF500B9164F /* Let It Go Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go Extension.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,7 @@
 				37B655D730732FF400B9164F /* Assets.xcassets */,
 				37B655F930732FF500B9164F /* AppIcon.icon */,
 				37B655D930732FF400B9164F /* Info.plist */,
+				37B655FE30732FF500B9164F /* Let It Go.entitlements */,
 			);
 			path = "Let It Go";
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 				37B655EF30732FF500B9164F /* Resources */,
 				37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */,
 				37B655E530732FF400B9164F /* Info.plist */,
+				37B655FF30732FF500B9164F /* Let It Go Extension.entitlements */,
 			);
 			path = "Let It Go Extension";
 			sourceTree = "<group>";
@@ -124,6 +130,7 @@
 				37B655F130732FF500B9164F /* rules.json */,
 				37B655F230732FF500B9164F /* manifest.json */,
 				37B655F330732FF500B9164F /* fallback.js */,
+				37B655FD30732FF500B9164F /* background.js */,
 			);
 			name = Resources;
 			path = "Let It Go Extension";
@@ -219,6 +226,7 @@
 				37B655F430732FF500B9164F /* icons in Resources */,
 				37B655F630732FF500B9164F /* manifest.json in Resources */,
 				37B655F730732FF500B9164F /* fallback.js in Resources */,
+				37B655FC30732FF500B9164F /* background.js in Resources */,
 				37B655F530732FF500B9164F /* rules.json in Resources */,
 			);
 		};
@@ -389,6 +397,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension.entitlements";
 				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -424,6 +433,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension.entitlements";
 				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -463,6 +473,7 @@
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go/Let It Go.entitlements";
 				INFOPLIST_FILE = "Let It Go/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -506,6 +517,7 @@
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go/Let It Go.entitlements";
 				INFOPLIST_FILE = "Let It Go/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
