@@ -7,46 +7,47 @@
 
 import Cocoa
 import SafariServices
-import WebKit
+import SwiftUI
 
 let extensionBundleIdentifier = "dev.ettlin.nicolas.letitgo.extension"
 
-class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
+class ViewController: NSViewController {
 
-    @IBOutlet var webView: WKWebView!
+    private let status = ExtensionStatus()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.webView.navigationDelegate = self
+        let hostingView = NSHostingView(rootView: ContentView(status: status, openSafariSettings: { [weak self] in
+            self?.openSafariSettings()
+        }))
+        hostingView.frame = view.bounds
+        hostingView.autoresizingMask = [.width, .height]
+        view.addSubview(hostingView)
 
-        self.webView.configuration.userContentController.add(self, name: "controller")
-
-        self.webView.loadFileURL(Bundle.main.url(forResource: "Main", withExtension: "html")!, allowingReadAccessTo: Bundle.main.resourceURL!)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshState), name: NSApplication.didBecomeActiveNotification, object: nil)
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { (state, error) in
-            guard let state = state, error == nil else {
-                // Insert code to inform the user that something went wrong.
-                return
-            }
+    override func viewWillAppear() {
+        super.viewWillAppear()
 
+        guard let window = view.window else { return }
+        window.styleMask.insert(.fullSizeContentView)
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.isMovableByWindowBackground = true
+        window.appearance = NSAppearance(named: .darkAqua)
+    }
+
+    @objc private func refreshState() {
+        SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
             DispatchQueue.main.async {
-                if #available(macOS 13, *) {
-                    webView.evaluateJavaScript("show(\(state.isEnabled), true)")
-                } else {
-                    webView.evaluateJavaScript("show(\(state.isEnabled), false)")
-                }
+                self.status.isEnabled = state?.isEnabled
             }
         }
     }
 
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if (message.body as! String != "open-preferences") {
-            return;
-        }
-
+    private func openSafariSettings() {
         SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
             DispatchQueue.main.async {
                 NSApplication.shared.terminate(nil)
