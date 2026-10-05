@@ -35,8 +35,15 @@ body {
   font: 13px -apple-system, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   user-select: none;
-  /* Approximates the app's mesh gradient: deep navy at the top, a lavender
-     glow in the middle and a pink dusk in the bottom corner. */
+}
+
+/* Approximates the app's mesh gradient: deep navy at the top, a lavender glow
+   in the middle and a pink dusk in the bottom corner. Not on body: Safari
+   keeps the popover's own background, which a body background would go to. */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
     radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
