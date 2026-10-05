@@ -16,6 +16,7 @@ struct ContentView: View {
     var openSafariSettings: () -> Void
 
     @State private var openedSettings = false
+    @AppStorage("redirectBase") private var redirectBase = "http://go"
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,12 +27,20 @@ struct ContentView: View {
                 .frame(width: 144, height: 144)
                 .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 14) {
                 Text("Let It Go")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                Text("Type go/anything. Google stays out of it.")
-                    .font(.title3)
-                    .foregroundStyle(.white.opacity(0.7))
+                    .font(.system(size: 36, weight: .bold))
+                    .shadow(color: Color(hex: 0x0E0F33).opacity(0.55), radius: 10, y: 3)
+
+                HStack(spacing: 8) {
+                    Text("Redirect go/ to")
+                        .foregroundStyle(.white.opacity(0.75))
+                    TextField("http://go", text: $redirectBase)
+                        .textFieldStyle(.roundedBorder)
+                        .controlSize(.large)
+                        .frame(width: 170)
+                }
+                .font(.title3)
             }
             .padding(.top, 16)
 
