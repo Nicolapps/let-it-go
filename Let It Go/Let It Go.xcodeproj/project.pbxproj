@@ -427,7 +427,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -462,7 +462,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -504,7 +504,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -547,7 +547,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

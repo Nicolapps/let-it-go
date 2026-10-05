@@ -9,7 +9,7 @@ import Cocoa
 import SafariServices
 import WebKit
 
-let extensionBundleIdentifier = "com.nicolasettlin.LetItGo.Extension"
+let extensionBundleIdentifier = "dev.ettlin.nicolas.letitgo.extension"
 
 class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
 
