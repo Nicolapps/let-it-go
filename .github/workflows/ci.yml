@@ -123,17 +123,19 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # the build number is the commit count
 
       - name: Show toolchain
         run: |
           xcodebuild -version
           swift --version
 
+      # Same scheme as `just upload`: the commit count, which only goes up, plus the short hash.
       - name: Determine version
         id: version
-        env:
-          BUILD_NUMBER: ${{ github.run_number }}
         run: |
+          BUILD_NUMBER=$(git rev-list --count HEAD)
+          COMMIT=$(git rev-parse --short HEAD)
           marketing_version=$(
             xcodebuild -project "$XCODE_PROJECT" -scheme "$SCHEME" -configuration Release \
               -derivedDataPath "$DERIVED_DATA" -showBuildSettings 2>/dev/null \
@@ -146,7 +148,8 @@ jobs:
           {
             echo "marketing_version=$marketing_version"
             echo "build_number=$BUILD_NUMBER"
-            echo "tag=v${marketing_version}-build.${BUILD_NUMBER}"
+            echo "commit=$COMMIT"
+            echo "tag=v${marketing_version}-build.${BUILD_NUMBER}-${COMMIT}"
             echo "asset=Let-It-Go-${marketing_version}-build.${BUILD_NUMBER}.zip"
           } | tee -a "$GITHUB_OUTPUT"
 
@@ -175,6 +178,7 @@ jobs:
       - name: Archive
         env:
           BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild archive \
@@ -185,6 +189,7 @@ jobs:
             -derivedDataPath "$DERIVED_DATA" \
             -archivePath "$ARCHIVE_PATH" \
             "CURRENT_PROJECT_VERSION=$BUILD_NUMBER" \
+            "GIT_COMMIT=$COMMIT" \
             CODE_SIGN_STYLE=Manual \
             "CODE_SIGN_IDENTITY=Developer ID Application" \
             "DEVELOPMENT_TEAM=$APPLE_TEAM_ID" \

@@ -15,8 +15,8 @@ Dependabot (`.github/dependabot.yml`) keeps the SHA-pinned actions current with 
 
 Every push to `main` produces one release:
 
-- Build number: the workflow run number, written into `CURRENT_PROJECT_VERSION`.
-- Tag: `v<MARKETING_VERSION>-build.<run number>`, for example `v1.0-build.42`. Bump `MARKETING_VERSION` in Xcode to change the version part.
+- Build number: the commit count (`git rev-list --count HEAD`), written into `CURRENT_PROJECT_VERSION`. It only goes up, as App Store Connect requires, and `just build` and `just upload` use it too. The short commit hash goes into the app's Info.plist as `GitCommit`.
+- Tag: `v<MARKETING_VERSION>-build.<build number>-<short hash>`, for example `v1.0.0-build.54-cdbfb5b`. Bump `MARKETING_VERSION` in Xcode to change the version part.
 - Asset: `Let-It-Go-<version>-build.<n>.zip`, created with `ditto` so the bundle survives the round trip intact.
 - Notes: a short header plus GitHub's auto-generated notes (merged PRs and commits since the previous tag).
 
