@@ -86,8 +86,10 @@ struct ContentView: View {
                         StepText("Choose *Allow* for your search engine") {
                             SafariSnippet(action: openSettings) {
                                 HStack(spacing: 6) {
-                                    Image(systemName: "globe")
-                                        .opacity(0.6)
+                                    // Safari shows the site's favicon once it has one.
+                                    Image(.googleLogo)
+                                        .resizable()
+                                        .frame(width: 16, height: 16)
                                     Text("google.com")
                                     Spacer()
                                     ReplicaButton {

@@ -18,6 +18,11 @@ class ViewController: NSViewController {
 
     private let status = ExtensionStatus()
 
+    /// Safari doesn't announce when the extension is turned on or off, so ask
+    /// it every second while the window is up and the checklist updates while
+    /// the user is still in Safari Settings.
+    private var pollTimer: Timer?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -47,12 +52,24 @@ class ViewController: NSViewController {
 
         // Don't start with the cursor in the redirect target field.
         view.window?.makeFirstResponder(nil)
+
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            self?.refreshState()
+        }
+    }
+
+    override func viewDidDisappear() {
+        super.viewDidDisappear()
+        pollTimer?.invalidate()
+        pollTimer = nil
     }
 
     @objc private func refreshState() {
         SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
             DispatchQueue.main.async {
-                self.status.isEnabled = state?.isEnabled
+                if self.status.isEnabled != state?.isEnabled {
+                    self.status.isEnabled = state?.isEnabled
+                }
             }
         }
     }
