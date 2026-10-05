@@ -46,7 +46,7 @@ struct ContentView: View {
 
             Spacer(minLength: 32)
 
-            GlassEffectContainer(spacing: 12) {
+            GlassContainer(spacing: 12) {
                 VStack(alignment: .leading, spacing: 22) {
                     SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
                         Button(action: openSettings) {
@@ -55,7 +55,7 @@ struct ContentView: View {
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                         }
-                        .buttonStyle(.glass)
+                        .glassButtonStyle()
                         .controlSize(.extraLarge)
                     }
 
@@ -296,7 +296,7 @@ private struct SetupStep<Content: View>: View {
                 }
             }
             .frame(width: 32, height: 32)
-            .glassEffect(.clear, in: .circle)
+            .clearGlassCircle()
 
             content
         }
@@ -465,6 +465,43 @@ private struct Snowfall: View {
             }
         }
         .allowsHitTesting(false)
+    }
+}
+
+// MARK: - Glass
+
+/// Groups glass shapes so they blend together on macOS 26 and later; earlier
+/// systems have no glass and just show the content.
+private struct GlassContainer<Content: View>: View {
+    var spacing: CGFloat
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        if #available(macOS 26, *) {
+            GlassEffectContainer(spacing: spacing) { content }
+        } else {
+            content
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func glassButtonStyle() -> some View {
+        if #available(macOS 26, *) {
+            buttonStyle(.glass)
+        } else {
+            buttonStyle(.bordered)
+        }
+    }
+
+    @ViewBuilder
+    func clearGlassCircle() -> some View {
+        if #available(macOS 26, *) {
+            glassEffect(.clear, in: .circle)
+        } else {
+            background(.ultraThinMaterial, in: .circle)
+        }
     }
 }
 
