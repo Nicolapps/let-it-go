@@ -47,7 +47,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
                         Button(action: openSettings) {
-                            Label("Open Safari Settings › Extensions", systemImage: "safari")
+                            Label("Open Safari Settings › *Extensions*", systemImage: "safari")
                                 .font(.headline)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -63,8 +63,9 @@ struct ContentView: View {
                                     ReplicaCheckbox()
                                     Image(nsImage: NSApp.applicationIconImage)
                                         .resizable()
-                                        .frame(width: 20, height: 20)
+                                        .frame(width: 28, height: 28)
                                     Text("Let It Go")
+                                        .font(.system(size: 14))
                                 }
                             }
                         }
@@ -142,11 +143,29 @@ private struct RedirectTargetField: View {
     @State private var saveCount = 0
     @State private var shakeCount = 0
     @FocusState private var isFocused: Bool
+    @State private var appearance = SystemAppearance()
 
     var body: some View {
+        let isDark = appearance.isDark
+        // Drawn by hand so it can follow the system appearance in this always-dark
+        // window, like the Safari replicas below.
         TextField("http://go", text: $draft)
-            .textFieldStyle(.roundedBorder)
-            .controlSize(.large)
+            .textFieldStyle(.plain)
+            .foregroundStyle(isDark ? .white : .black)
+            .padding(.horizontal, 8)
+            .frame(height: 30)
+            .background(isDark ? Color(hex: 0x1E1E22) : .white, in: .rect(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(isDark ? .white.opacity(0.12) : .black.opacity(0.1))
+            }
+            .overlay {
+                if isFocused {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.accentColor.opacity(0.6), lineWidth: 3)
+                        .padding(-2)
+                }
+            }
             .focused($isFocused)
             .onSubmit(commit)
             // There's nothing else to tab to, so focus wouldn't change on its own.
@@ -162,7 +181,7 @@ private struct RedirectTargetField: View {
                 Group {
                     switch feedback {
                     case .saved:
-                        Image(systemName: "checkmark").foregroundStyle(.mint)
+                        Image(systemName: "checkmark").foregroundStyle(isDark ? .mint : .green)
                     case .invalid:
                         Image(systemName: "xmark").foregroundStyle(.red)
                     case nil:
@@ -244,7 +263,7 @@ private struct SetupStep<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(alignment: .stepTitle, spacing: 14) {
             ZStack {
                 if isDone {
                     Image(systemName: "checkmark")
@@ -265,6 +284,15 @@ private struct SetupStep<Content: View>: View {
     }
 }
 
+private extension VerticalAlignment {
+    /// The middle of a step's first line, which its badge lines up with.
+    enum StepTitle: AlignmentID {
+        static func defaultValue(in d: ViewDimensions) -> CGFloat { d[VerticalAlignment.center] }
+    }
+
+    static let stepTitle = VerticalAlignment(StepTitle.self)
+}
+
 /// A step's instruction above a replica of the Safari Settings control it
 /// refers to.
 private struct StepText<Snippet: View>: View {
@@ -277,10 +305,10 @@ private struct StepText<Snippet: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
-                .frame(minHeight: 32)
+                .alignmentGuide(.stepTitle) { $0[VerticalAlignment.center] }
             snippet
         }
     }
@@ -304,7 +332,7 @@ private struct SafariSnippet<Content: View>: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
-            .background(isDark ? Color(hex: 0x1E1E22).opacity(0.85) : Color(hex: 0xF4F4F6).opacity(0.92), in: .rect(cornerRadius: 10))
+            .background(isDark ? Color(hex: 0x1E1E22).opacity(0.85) : .white, in: .rect(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(isDark ? .white.opacity(0.12) : .black.opacity(0.08))
@@ -340,9 +368,7 @@ private struct ReplicaButton<Label: View>: View {
         label
             .padding(.horizontal, 12)
             .frame(height: 24)
-            .background(isDark ? .white.opacity(0.12) : .white, in: .rect(cornerRadius: 7))
-            .shadow(color: .black.opacity(isDark ? 0 : 0.15), radius: 0.5, y: 0.5)
-            .shadow(color: .black.opacity(isDark ? 0 : 0.08), radius: 1.5, y: 0.5)
+            .background(isDark ? .white.opacity(0.12) : .black.opacity(0.07), in: .rect(cornerRadius: 7))
     }
 }
 
