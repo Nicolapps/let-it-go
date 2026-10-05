@@ -15,9 +15,10 @@ build config="Debug":
 run config="Debug": (build config) quit
     open "{{derived}}/Build/Products/{{config}}/Let It Go.app"
 
-# Quit the running app, if any
+# Quit the running app, if any, and wait for it to exit so `open` doesn't race it
 quit:
     -pkill -x "Let It Go"
+    while pgrep -x "Let It Go" >/dev/null; do sleep 0.1; done
 
 # Build Release and copy the app into /Applications
 install: (build "Release") quit
