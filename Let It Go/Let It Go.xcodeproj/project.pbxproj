@@ -400,7 +400,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension.entitlements";
 				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -436,7 +436,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension.entitlements";
 				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -476,7 +476,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Let It Go/Let It Go.entitlements";
 				INFOPLIST_FILE = "Let It Go/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
@@ -520,7 +520,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Let It Go/Let It Go.entitlements";
 				INFOPLIST_FILE = "Let It Go/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
