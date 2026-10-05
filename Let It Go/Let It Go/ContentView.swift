@@ -47,7 +47,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
                         Button(action: openSettings) {
-                            Label("Open Safari Settings", systemImage: "safari")
+                            Label("Open Safari Settings › Extensions", systemImage: "safari")
                                 .font(.headline)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -57,45 +57,42 @@ struct ContentView: View {
                     }
 
                     SetupStep(number: 2, isDone: status.isEnabled == true) {
-                        StepText("In Extensions, tick Let It Go") {
+                        StepText("Select *Let It Go*") {
                             SafariSnippet(action: openSettings) {
-                                Toggle(isOn: .constant(true)) {
-                                    HStack(spacing: 6) {
-                                        Image(nsImage: NSApp.applicationIconImage)
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                        Text("Let It Go")
-                                    }
+                                HStack(spacing: 8) {
+                                    ReplicaCheckbox()
+                                    Image(nsImage: NSApp.applicationIconImage)
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                    Text("Let It Go")
                                 }
-                                .toggleStyle(.checkbox)
                             }
                         }
                     }
 
                     SetupStep(number: 3, isDone: false) {
-                        StepText("Then click Edit Websites…") {
+                        StepText("Click *Edit Websites…*") {
                             SafariSnippet(action: openSettings) {
-                                Button("Edit Websites…") {}
-                                    .buttonStyle(.bordered)
+                                ReplicaButton { Text("Edit Websites…") }
                             }
                         }
                     }
 
                     SetupStep(number: 4, isDone: false) {
-                        StepText("Set your search engine to Allow") {
+                        StepText("Choose *Allow* for your search engine") {
                             SafariSnippet(action: openSettings) {
                                 HStack(spacing: 6) {
                                     Image(systemName: "globe")
-                                        .foregroundStyle(.secondary)
+                                        .opacity(0.6)
                                     Text("google.com")
                                     Spacer()
-                                    Picker("", selection: .constant("Allow")) {
-                                        Text("Ask").tag("Ask")
-                                        Text("Deny").tag("Deny")
-                                        Text("Allow").tag("Allow")
+                                    ReplicaButton {
+                                        HStack(spacing: 18) {
+                                            Text("Allow")
+                                            Image(systemName: "chevron.up.chevron.down")
+                                                .font(.system(size: 9, weight: .bold))
+                                        }
                                     }
-                                    .labelsHidden()
-                                    .fixedSize()
                                 }
                             }
                         }
@@ -271,10 +268,10 @@ private struct SetupStep<Content: View>: View {
 /// A step's instruction above a replica of the Safari Settings control it
 /// refers to.
 private struct StepText<Snippet: View>: View {
-    var title: String
+    var title: LocalizedStringKey
     @ViewBuilder var snippet: Snippet
 
-    init(_ title: String, @ViewBuilder snippet: () -> Snippet) {
+    init(_ title: LocalizedStringKey, @ViewBuilder snippet: () -> Snippet) {
         self.title = title
         self.snippet = snippet()
     }
@@ -290,26 +287,77 @@ private struct StepText<Snippet: View>: View {
 }
 
 /// A cut-out of Safari Settings showing a control in the state it should end up
-/// in. The controls inside are real so they look exactly like Safari's, but
-/// clicking anywhere on the snippet opens Safari Settings instead.
+/// in. It follows the system appearance like Safari does, even though this
+/// window is always dark, and clicking it opens Safari Settings.
 private struct SafariSnippet<Content: View>: View {
     var action: () -> Void
     @ViewBuilder var content: Content
 
+    @State private var appearance = SystemAppearance()
+
     var body: some View {
+        let isDark = appearance.isDark
         content
-            .font(.body)
-            .allowsHitTesting(false)
+            .font(.system(size: 13))
+            .foregroundStyle(isDark ? .white.opacity(0.9) : .black.opacity(0.85))
+            .environment(\.colorScheme, isDark ? .dark : .light)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(hex: 0x1E1E22).opacity(0.85), in: .rect(cornerRadius: 10))
+            .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+            .background(isDark ? Color(hex: 0x1E1E22).opacity(0.85) : Color(hex: 0xF4F4F6).opacity(0.92), in: .rect(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(.white.opacity(0.12))
+                    .strokeBorder(isDark ? .white.opacity(0.12) : .black.opacity(0.08))
             }
             .contentShape(.rect)
             .onTapGesture(perform: action)
+    }
+}
+
+// Lookalikes of AppKit controls, drawn by hand because real ones would follow
+// the window's dark appearance rather than the system's.
+
+private struct ReplicaCheckbox: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 4)
+            .fill(.tint)
+            .frame(width: 16, height: 16)
+            .overlay {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+    }
+}
+
+private struct ReplicaButton<Label: View>: View {
+    @ViewBuilder var label: Label
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        let isDark = colorScheme == .dark
+        label
+            .padding(.horizontal, 12)
+            .frame(height: 24)
+            .background(isDark ? .white.opacity(0.12) : .white, in: .rect(cornerRadius: 7))
+            .shadow(color: .black.opacity(isDark ? 0 : 0.15), radius: 0.5, y: 0.5)
+            .shadow(color: .black.opacity(isDark ? 0 : 0.08), radius: 1.5, y: 0.5)
+    }
+}
+
+/// Tracks whether the system is in light or dark mode.
+@Observable
+private final class SystemAppearance {
+    private(set) var isDark = true
+    @ObservationIgnored private var observation: NSKeyValueObservation?
+
+    init() {
+        observation = NSApp.observe(\.effectiveAppearance, options: [.initial, .new]) { [weak self] app, _ in
+            MainActor.assumeIsolated {
+                self?.isDark = app.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+            }
+        }
     }
 }
 
