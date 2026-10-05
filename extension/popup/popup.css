@@ -1,5 +1,4 @@
-/* The app window's look, on the app icon's gradient, in a dark and a light
-   version to match the popover Safari draws around it. */
+/* The app window's look: always dark, on the app icon's gradient. */
 
 :root {
   color-scheme: light dark;
@@ -10,8 +9,6 @@
   --label: rgb(255 255 255 / 0.75);
   --title-shadow: rgb(14 15 51 / 0.55);
   --icon-shadow: rgb(106 106 184 / 0.6);
-  /* Read by popup.js. */
-  --snow: 255 255 255;
   --background:
     radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
     radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
@@ -25,22 +22,9 @@
   --saved: #66d4cf;
 }
 
-/* The same gradient washed out to frost, fading into Safari's light popover
-   at the top. */
+/* The field follows the system appearance, like in the app. */
 @media (prefers-color-scheme: light) {
   :root {
-    --text: #1d1c5c;
-    --label: rgb(29 28 92 / 0.7);
-    --title-shadow: rgb(106 106 184 / 0.25);
-    --icon-shadow: rgb(106 106 184 / 0.45);
-    --snow: 106 106 184;
-    --background:
-      radial-gradient(60% 45% at 50% 40%, rgb(255 255 255 / 0.8), transparent),
-      radial-gradient(55% 45% at 100% 100%, rgb(232 168 220 / 0.75), transparent),
-      radial-gradient(50% 40% at 0% 100%, rgb(176 190 238 / 0.7), transparent),
-      radial-gradient(45% 35% at 50% 100%, rgb(196 168 232 / 0.7), transparent),
-      linear-gradient(to bottom, #f1f0f8, #e3e0f4 45%, #d6cdf0);
-
     --field-bg: #fff;
     --field-text: #000;
     --field-border: rgb(0 0 0 / 0.1);
