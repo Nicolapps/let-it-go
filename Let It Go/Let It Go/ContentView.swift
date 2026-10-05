@@ -380,7 +380,7 @@ private struct SafariSnippet<Content: View>: View {
             .task(id: hintCount) {
                 guard showsHint else { return }
                 do {
-                    try await Task.sleep(for: .seconds(2.5))
+                    try await Task.sleep(for: .seconds(3))
                     showsHint = false
                 } catch {}
             }
