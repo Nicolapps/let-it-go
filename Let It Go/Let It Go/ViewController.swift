@@ -19,7 +19,7 @@ class ViewController: NSViewController {
     private let status = ExtensionStatus()
 
     /// Safari doesn't announce when the extension is turned on or off, so ask
-    /// it every second while the window is up and the checklist updates while
+    /// it ten times a second while the window is up and the checklist updates while
     /// the user is still in Safari Settings.
     private var pollTimer: Timer?
 
@@ -53,7 +53,7 @@ class ViewController: NSViewController {
         // Don't start with the cursor in the redirect target field.
         view.window?.makeFirstResponder(nil)
 
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.refreshState()
         }
     }
