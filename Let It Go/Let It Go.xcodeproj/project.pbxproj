@@ -15,6 +15,7 @@
 		37B655D330732FF300B9164F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655D230732FF300B9164F /* ViewController.swift */; };
 		37B655D630732FF300B9164F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D430732FF300B9164F /* Main.storyboard */; };
 		37B655D830732FF400B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D730732FF400B9164F /* Assets.xcassets */; };
+		37B655F830732FF500B9164F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F930732FF500B9164F /* AppIcon.icon */; };
 		37B655DF30732FF400B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37B655DE30732FF400B9164F /* Let It Go Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		37B655E430732FF400B9164F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */; };
 		37B655F430732FF500B9164F /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F030732FF500B9164F /* icons */; };
@@ -55,6 +56,7 @@
 		37B655D230732FF300B9164F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		37B655D530732FF300B9164F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		37B655D730732FF400B9164F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37B655F930732FF500B9164F /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		37B655D930732FF400B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37B655DE30732FF400B9164F /* Let It Go Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Let It Go Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				37B655D230732FF300B9164F /* ViewController.swift */,
 				37B655D430732FF300B9164F /* Main.storyboard */,
 				37B655D730732FF400B9164F /* Assets.xcassets */,
+				37B655F930732FF500B9164F /* AppIcon.icon */,
 				37B655D930732FF400B9164F /* Info.plist */,
 				37B655C830732FF300B9164F /* Resources */,
 			);
@@ -227,6 +230,7 @@
 				37B655D130732FF300B9164F /* Script.js in Resources */,
 				37B655CB30732FF300B9164F /* Main.html in Resources */,
 				37B655D830732FF400B9164F /* Assets.xcassets in Resources */,
+				37B655F830732FF500B9164F /* AppIcon.icon in Resources */,
 				37B655CF30732FF300B9164F /* Style.css in Resources */,
 			);
 		};
