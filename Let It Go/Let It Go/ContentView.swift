@@ -87,18 +87,22 @@ struct ContentView: View {
                 Snowfall()
             }
             .ignoresSafeArea()
-            // Clicking anywhere else ends an edit of the redirect target.
-            .onTapGesture { NSApp.keyWindow?.makeFirstResponder(nil) }
         }
+        // Dragging anywhere that isn't a control moves the window, and clicking
+        // ends an edit of the redirect target.
+        .contentShape(.rect)
+        .gesture(WindowDragGesture())
+        .onTapGesture { NSApp.keyWindow?.makeFirstResponder(nil) }
         .environment(\.colorScheme, .dark)
         .animation(.smooth, value: status.isEnabled)
         .animation(.smooth, value: openedSettings)
     }
 }
 
-/// The redirect target, shown as a glass pill that turns into a text field when
-/// clicked. Return or clicking away saves, Escape puts the old value back, and a
-/// checkmark confirms the save. Nothing here takes keyboard focus on launch.
+/// The redirect target, shown as plain glass until clicked, when it becomes a
+/// standard text field. Return or clicking away saves, Escape puts the old value
+/// back, and a checkmark briefly confirms the save. Nothing here takes keyboard
+/// focus on launch.
 private struct RedirectTargetField: View {
     @Binding var value: String
 
@@ -109,55 +113,54 @@ private struct RedirectTargetField: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        HStack(spacing: 8) {
-            Group {
-                if isEditing {
-                    TextField("http://go", text: $draft)
-                        .textFieldStyle(.plain)
-                        .focused($isFocused)
-                        .onAppear { isFocused = true }
-                        .onSubmit(commit)
-                        .onExitCommand(perform: cancel)
-                } else {
-                    Text(value)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+        // The field is always laid out so both states share its exact frame, but
+        // it stays disabled (so untabbable) and invisible until clicked.
+        TextField("http://go", text: $draft)
+            .textFieldStyle(.roundedBorder)
+            .controlSize(.large)
+            .focused($isFocused)
+            .onSubmit(commit)
+            .onExitCommand(perform: cancel)
+            .disabled(!isEditing)
+            .opacity(isEditing ? 1 : 0)
+            .overlay {
+                if !isEditing {
+                    HStack(spacing: 6) {
+                        Text(value)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                        Spacer(minLength: 0)
+                        if justSaved {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(.mint)
+                                .transition(.scale.combined(with: .opacity))
+                        }
+                    }
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(.rect)
+                    .glassEffect(.clear, in: .rect(cornerRadius: 8))
+                    .onTapGesture(perform: beginEditing)
+                    .pointerStyle(.horizontalText)
+                    .accessibilityAddTraits(.isButton)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            Image(systemName: justSaved ? "checkmark" : isEditing ? "return" : "pencil")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(justSaved ? AnyShapeStyle(.mint) : AnyShapeStyle(.white.opacity(0.55)))
-                .contentTransition(.symbolEffect(.replace))
-        }
-        .padding(.horizontal, 14)
-        .frame(width: 200, height: 36)
-        .contentShape(.capsule)
-        .glassEffect(isEditing ? .regular.tint(.white.opacity(0.06)) : .clear, in: .capsule)
-        .overlay(alignment: .bottom) {
-            Text("Saved. Safari picks it up next time you switch to it.")
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.6))
-                .fixedSize()
-                .offset(y: 24)
-                .opacity(justSaved ? 1 : 0)
-        }
-        .gesture(TapGesture().onEnded(beginEditing), isEnabled: !isEditing)
-        .pointerStyle(isEditing ? nil : .horizontalText)
-        .accessibilityAddTraits(isEditing ? [] : .isButton)
-        .onChange(of: isFocused) { _, focused in
-            if !focused && isEditing { commit() }
-        }
-        .task(id: saveCount) {
-            guard justSaved else { return }
-            do {
-                try await Task.sleep(for: .seconds(2.5))
-                justSaved = false
-            } catch {}
-        }
-        .animation(.smooth(duration: 0.25), value: isEditing)
-        .animation(.smooth(duration: 0.3), value: justSaved)
+            .frame(width: 200)
+            .onChange(of: isEditing) { _, editing in
+                if editing { isFocused = true }
+            }
+            .onChange(of: isFocused) { _, focused in
+                if !focused && isEditing { commit() }
+            }
+            .task(id: saveCount) {
+                guard justSaved else { return }
+                do {
+                    try await Task.sleep(for: .seconds(1.5))
+                    justSaved = false
+                } catch {}
+            }
+            .animation(.smooth(duration: 0.2), value: justSaved)
     }
 
     private func beginEditing() {
