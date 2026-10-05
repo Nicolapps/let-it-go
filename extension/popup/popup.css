@@ -47,7 +47,6 @@ body {
   overflow: hidden;
   color: var(--text);
   font: 13px -apple-system, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
   -webkit-user-select: none;
   user-select: none;
   cursor: default;
@@ -139,7 +138,7 @@ input {
   background: var(--field-bg);
   color: var(--field-text);
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
   -webkit-user-select: text;
   user-select: text;
   cursor: text;
