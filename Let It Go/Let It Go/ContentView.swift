@@ -30,7 +30,7 @@ struct ContentView: View {
                 .frame(width: 112, height: 112)
                 .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
-            VStack(spacing: 14) {
+            VStack(spacing: 28) {
                 Text("Let It Go")
                     .font(.system(size: 36, weight: .bold))
                     .shadow(color: Color(hex: 0x0E0F33).opacity(0.55), radius: 10, y: 3)
