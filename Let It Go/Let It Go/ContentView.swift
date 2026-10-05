@@ -83,6 +83,7 @@ struct ContentView: View {
                         StepText("Click *Edit Websites…*") {
                             SafariSnippet {
                                 ReplicaButton { Text("Edit Websites…") }
+                                    .controlSize(.small)
                             }
                         }
                     }
@@ -411,13 +412,19 @@ private struct ReplicaButton<Label: View>: View {
     @ViewBuilder var label: Label
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.controlSize) private var controlSize
 
     var body: some View {
         let isDark = colorScheme == .dark
+        let isSmall = controlSize == .small
         label
-            .padding(.horizontal, 12)
-            .frame(height: 24)
-            .background(isDark ? .white.opacity(0.12) : .black.opacity(0.07), in: .rect(cornerRadius: 7))
+            .font(isSmall ? .system(size: 11) : nil)
+            .padding(.horizontal, isSmall ? 16 : 12)
+            .frame(height: isSmall ? 20 : 24)
+            .background(
+                isDark ? .white.opacity(0.12) : .black.opacity(0.07),
+                in: .rect(cornerRadius: isSmall ? 6 : 7)
+            )
     }
 }
 
