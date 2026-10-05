@@ -42,6 +42,13 @@ class ViewController: NSViewController {
         window.appearance = NSAppearance(named: .darkAqua)
     }
 
+    override func viewDidAppear() {
+        super.viewDidAppear()
+
+        // Don't start with the cursor in the redirect target field.
+        view.window?.makeFirstResponder(nil)
+    }
+
     @objc private func refreshState() {
         SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
             DispatchQueue.main.async {

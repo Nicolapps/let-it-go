@@ -99,87 +99,105 @@ struct ContentView: View {
     }
 }
 
-/// The redirect target, shown as plain glass until clicked, when it becomes a
-/// standard text field. Return or clicking away saves, Escape puts the old value
-/// back, and a checkmark briefly confirms the save. Nothing here takes keyboard
-/// focus on launch.
+/// The redirect target. Return or clicking away saves it, Escape puts the old
+/// value back. A save is confirmed with a checkmark; an invalid value shakes the
+/// field and shows a red cross until it's edited.
 private struct RedirectTargetField: View {
     @Binding var value: String
 
+    private enum Feedback { case saved, invalid }
+
     @State private var draft = ""
-    @State private var isEditing = false
+    @State private var feedback: Feedback?
     @State private var saveCount = 0
-    @State private var justSaved = false
+    @State private var shakeCount = 0
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        // The field is always laid out so both states share its exact frame, but
-        // it stays disabled (so untabbable) and invisible until clicked.
         TextField("http://go", text: $draft)
             .textFieldStyle(.roundedBorder)
             .controlSize(.large)
             .focused($isFocused)
             .onSubmit(commit)
-            .onExitCommand(perform: cancel)
-            .disabled(!isEditing)
-            .opacity(isEditing ? 1 : 0)
-            .overlay {
-                if !isEditing {
-                    HStack(spacing: 6) {
-                        Text(value)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                        Spacer(minLength: 0)
-                        if justSaved {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(.mint)
-                                .transition(.scale.combined(with: .opacity))
-                        }
+            .onExitCommand {
+                draft = value
+                isFocused = false
+            }
+            .overlay(alignment: .trailing) {
+                Group {
+                    switch feedback {
+                    case .saved:
+                        Image(systemName: "checkmark").foregroundStyle(.mint)
+                    case .invalid:
+                        Image(systemName: "xmark").foregroundStyle(.red)
+                    case nil:
+                        EmptyView()
                     }
-                    .padding(.horizontal, 8)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .contentShape(.rect)
-                    .glassEffect(.clear, in: .rect(cornerRadius: 8))
-                    .onTapGesture(perform: beginEditing)
-                    .pointerStyle(.horizontalText)
-                    .accessibilityAddTraits(.isButton)
                 }
+                .font(.system(size: 12, weight: .bold))
+                .padding(.trailing, 9)
+                .transition(.scale.combined(with: .opacity))
+                .allowsHitTesting(false)
             }
             .frame(width: 200)
-            .onChange(of: isEditing) { _, editing in
-                if editing { isFocused = true }
+            .keyframeAnimator(initialValue: 0, trigger: shakeCount) { view, x in
+                view.offset(x: x)
+            } keyframes: { _ in
+                KeyframeTrack {
+                    LinearKeyframe(-8, duration: 0.06)
+                    LinearKeyframe(7, duration: 0.07)
+                    LinearKeyframe(-5, duration: 0.07)
+                    LinearKeyframe(3, duration: 0.06)
+                    LinearKeyframe(0, duration: 0.05)
+                }
+            }
+            .onAppear { draft = value }
+            .onChange(of: draft) { _, newDraft in
+                // Saving also rewrites the draft, which shouldn't hide its checkmark.
+                if feedback == .invalid || newDraft != value { feedback = nil }
             }
             .onChange(of: isFocused) { _, focused in
-                if !focused && isEditing { commit() }
+                if !focused { commit() }
             }
             .task(id: saveCount) {
-                guard justSaved else { return }
+                guard feedback == .saved else { return }
                 do {
                     try await Task.sleep(for: .seconds(1.5))
-                    justSaved = false
+                    feedback = nil
                 } catch {}
             }
-            .animation(.smooth(duration: 0.2), value: justSaved)
-    }
-
-    private func beginEditing() {
-        draft = value
-        justSaved = false
-        isEditing = true
+            .animation(.smooth(duration: 0.2), value: feedback)
     }
 
     private func commit() {
-        isEditing = false
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, trimmed != value else { return }
+        guard trimmed != value else {
+            draft = value
+            return
+        }
+        guard Self.isValid(trimmed) else {
+            feedback = .invalid
+            shakeCount += 1
+            return
+        }
         value = trimmed
-        justSaved = true
+        draft = trimmed
+        feedback = .saved
         saveCount += 1
+        isFocused = false
     }
 
-    private func cancel() {
-        isEditing = false
+    /// Accepts what the extension's `normalizeBase` can turn into a redirect:
+    /// a bare host like `go` or `go.example.com`, or an http(s) URL, with no
+    /// query or fragment.
+    private static func isValid(_ base: String) -> Bool {
+        guard !base.isEmpty, !base.contains(where: \.isWhitespace) else { return false }
+        let withScheme = base.contains("://") ? base : "http://" + base
+        guard let url = URL(string: withScheme),
+              let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme),
+              let host = url.host(), !host.isEmpty
+        else { return false }
+        return url.query == nil && url.fragment == nil
     }
 }
 
