@@ -91,6 +91,12 @@ const flakes = Array.from({ length: 30 }, () => ({
   sway: 4 + Math.random() * 10,
 }));
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+// White on the dark gradient, indigo on the light one.
+const darkMode = matchMedia("(prefers-color-scheme: dark)");
+let snowColor;
+const readSnowColor = () => (snowColor = getComputedStyle(document.documentElement).getPropertyValue("--snow").trim());
+readSnowColor();
+darkMode.addEventListener("change", readSnowColor);
 
 function drawSnow(time) {
   const scale = devicePixelRatio;
@@ -110,7 +116,7 @@ function drawSnow(time) {
     const x = flake.x * width + Math.sin(t * 0.6 + flake.phase * 10) * flake.sway;
     context.beginPath();
     context.arc(x + flake.size / 2, y + flake.size / 2, flake.size / 2, 0, Math.PI * 2);
-    context.fillStyle = `rgb(255 255 255 / ${flake.opacity})`;
+    context.fillStyle = `rgb(${snowColor} / ${flake.opacity})`;
     context.fill();
   }
   if (!reduceMotion.matches) requestAnimationFrame(drawSnow);

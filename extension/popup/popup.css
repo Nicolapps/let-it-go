@@ -1,16 +1,46 @@
-/* The app window's look: always dark, on the app icon's gradient. */
+/* The app window's look, on the app icon's gradient, in a dark and a light
+   version to match the popover Safari draws around it. */
 
 :root {
-  --indigo-glow: #6a6ab8;
+  color-scheme: light dark;
+  /* The space around and between everything. */
+  --inset: 28px;
+
+  --text: #fff;
+  --label: rgb(255 255 255 / 0.75);
+  --title-shadow: rgb(14 15 51 / 0.55);
+  --icon-shadow: rgb(106 106 184 / 0.6);
+  /* Read by popup.js. */
+  --snow: 255 255 255;
+  --background:
+    radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
+    radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
+    radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
+    radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
+    linear-gradient(to bottom, #0e0f33, #1d1c5c 45%, #3b2d84);
+
   --field-bg: #1e1e22;
   --field-text: #fff;
   --field-border: rgb(255 255 255 / 0.12);
   --saved: #66d4cf;
 }
 
-/* The field follows the system appearance, like in the app. */
+/* The same gradient washed out to frost, fading into Safari's light popover
+   at the top. */
 @media (prefers-color-scheme: light) {
   :root {
+    --text: #1d1c5c;
+    --label: rgb(29 28 92 / 0.7);
+    --title-shadow: rgb(106 106 184 / 0.25);
+    --icon-shadow: rgb(106 106 184 / 0.45);
+    --snow: 106 106 184;
+    --background:
+      radial-gradient(60% 45% at 50% 40%, rgb(255 255 255 / 0.8), transparent),
+      radial-gradient(55% 45% at 100% 100%, rgb(232 168 220 / 0.75), transparent),
+      radial-gradient(50% 40% at 0% 100%, rgb(176 190 238 / 0.7), transparent),
+      radial-gradient(45% 35% at 50% 100%, rgb(196 168 232 / 0.7), transparent),
+      linear-gradient(to bottom, #f1f0f8, #e3e0f4 45%, #d6cdf0);
+
     --field-bg: #fff;
     --field-text: #000;
     --field-border: rgb(0 0 0 / 0.1);
@@ -31,25 +61,21 @@ body {
   position: relative;
   width: 340px;
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font: 13px -apple-system, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
   user-select: none;
+  cursor: default;
 }
 
-/* Approximates the app's mesh gradient: deep navy at the top, a lavender glow
-   in the middle and a pink dusk in the bottom corner. Not on body: Safari
-   keeps the popover's own background, which a body background would go to. */
+/* Not on body: Safari keeps the popover's own background, which a body
+   background would go to. */
 body::before {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
-    radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
-    radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
-    radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
-    linear-gradient(to bottom, #0e0f33, #1d1c5c 45%, #3b2d84);
+  background: var(--background);
 }
 
 #snow {
@@ -65,38 +91,47 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 24px 32px;
+  gap: 20px;
+  padding: var(--inset);
 }
 
+/* The artwork fills the middle 80% of the image, so the negative margin
+   leaves an 80 px icon with no invisible padding around it. */
 .icon {
-  width: 88px;
-  height: 88px;
-  filter: drop-shadow(0 12px 28px rgb(106 106 184 / 0.6));
+  width: 100px;
+  height: 100px;
+  margin: -10px;
+  filter: drop-shadow(0 12px 28px var(--icon-shadow));
+  -webkit-user-drag: none;
 }
 
+/* Trimmed to the letters, so the gaps above and below it are what they say. */
 h1 {
-  margin: 12px 0 22px;
+  margin: 0;
   font-size: 30px;
   font-weight: 700;
-  text-shadow: 0 3px 10px rgb(14 15 51 / 0.55);
+  line-height: 1;
+  text-box: trim-both cap alphabetic;
+  text-shadow: 0 3px 10px var(--title-shadow);
 }
 
 .redirect {
   display: flex;
   align-items: center;
   gap: 8px;
+  align-self: stretch;
   font-size: 15px;
 }
 
 .redirect > span:first-child {
-  color: rgb(255 255 255 / 0.75);
+  color: var(--label);
   white-space: nowrap;
 }
 
 .field {
   position: relative;
   display: block;
-  width: 170px;
+  flex: 1;
 }
 
 .field.shake {
@@ -121,7 +156,9 @@ input {
   color: var(--field-text);
   font: inherit;
   font-size: 14px;
+  -webkit-user-select: text;
   user-select: text;
+  cursor: text;
 }
 
 input:focus {
