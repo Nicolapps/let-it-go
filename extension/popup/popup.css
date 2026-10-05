@@ -1,0 +1,148 @@
+/* The app window's look: always dark, on the app icon's gradient. */
+
+:root {
+  --indigo-glow: #6a6ab8;
+  --field-bg: #1e1e22;
+  --field-text: #fff;
+  --field-border: rgb(255 255 255 / 0.12);
+  --saved: #66d4cf;
+}
+
+/* The field follows the system appearance, like in the app. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --field-bg: #fff;
+    --field-text: #000;
+    --field-border: rgb(0 0 0 / 0.1);
+    --saved: #34c759;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  position: relative;
+  width: 340px;
+  overflow: hidden;
+  color: #fff;
+  font: 13px -apple-system, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  /* Approximates the app's mesh gradient: deep navy at the top, a lavender
+     glow in the middle and a pink dusk in the bottom corner. */
+  background:
+    radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
+    radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
+    radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
+    radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
+    linear-gradient(to bottom, #0e0f33, #1d1c5c 45%, #3b2d84);
+}
+
+#snow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 24px 32px;
+}
+
+.icon {
+  width: 88px;
+  height: 88px;
+  filter: drop-shadow(0 12px 28px rgb(106 106 184 / 0.6));
+}
+
+h1 {
+  margin: 12px 0 22px;
+  font-size: 30px;
+  font-weight: 700;
+  text-shadow: 0 3px 10px rgb(14 15 51 / 0.55);
+}
+
+.redirect {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.redirect > span:first-child {
+  color: rgb(255 255 255 / 0.75);
+  white-space: nowrap;
+}
+
+.field {
+  position: relative;
+  display: block;
+  width: 170px;
+}
+
+.field.shake {
+  animation: shake 0.31s linear;
+}
+
+@keyframes shake {
+  20% { transform: translateX(-8px); }
+  42% { transform: translateX(7px); }
+  65% { transform: translateX(-5px); }
+  84% { transform: translateX(3px); }
+}
+
+input {
+  width: 100%;
+  height: 28px;
+  padding: 0 26px 0 8px;
+  border: 1px solid var(--field-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--field-bg);
+  color: var(--field-text);
+  font: inherit;
+  font-size: 14px;
+  user-select: text;
+}
+
+input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, -apple-system-control-accent 60%, transparent);
+}
+
+#feedback {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+#feedback.saved,
+#feedback.invalid {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+#feedback.saved {
+  color: var(--saved);
+}
+
+#feedback.invalid {
+  color: #ff453a;
+}

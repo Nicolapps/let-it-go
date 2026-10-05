@@ -40,7 +40,13 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             defaults?.set(message["origins"] as? [String] ?? [], forKey: "allowedOrigins")
         }
 
-        // Written by the app's "Redirect go/ to" field.
+        // The toolbar popover's copy of the app's "Redirect go/ to" field.
+        if let message = message as? [String: Any], message["type"] as? String == "setRedirectBase",
+           let redirectBase = message["redirectBase"] as? String {
+            defaults?.set(redirectBase, forKey: "redirectBase")
+        }
+
+        // Written by the app's "Redirect go/ to" field, or the popover's.
         let redirectBase = defaults?.string(forKey: "redirectBase")
 
         let response = NSExtensionItem()

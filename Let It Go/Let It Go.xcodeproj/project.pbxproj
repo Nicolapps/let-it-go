@@ -16,6 +16,7 @@
 		37B655DF30732FF400B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37B655DE30732FF400B9164F /* Let It Go Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		37B655E430732FF400B9164F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */; };
 		37B655F430732FF500B9164F /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F030732FF500B9164F /* icons */; };
+		37B6560130732FF500B9164F /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560030732FF500B9164F /* popup */; };
 		37B655F530732FF500B9164F /* rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F130732FF500B9164F /* rules.json */; };
 		37B655F630732FF500B9164F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F230732FF500B9164F /* manifest.json */; };
 		37B655F730732FF500B9164F /* fallback.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F330732FF500B9164F /* fallback.js */; };
@@ -57,6 +58,7 @@
 		37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		37B655E530732FF400B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37B655F030732FF500B9164F /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../extension/icons; sourceTree = "<group>"; };
+		37B6560030732FF500B9164F /* popup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = popup; path = ../../extension/popup; sourceTree = "<group>"; };
 		37B655F130732FF500B9164F /* rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = rules.json; path = ../../extension/rules.json; sourceTree = "<group>"; };
 		37B655F230732FF500B9164F /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../extension/manifest.json; sourceTree = "<group>"; };
 		37B655F330732FF500B9164F /* fallback.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = fallback.js; path = ../../extension/fallback.js; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				37B655F030732FF500B9164F /* icons */,
+				37B6560030732FF500B9164F /* popup */,
 				37B655F130732FF500B9164F /* rules.json */,
 				37B655F230732FF500B9164F /* manifest.json */,
 				37B655F330732FF500B9164F /* fallback.js */,
@@ -224,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				37B655F430732FF500B9164F /* icons in Resources */,
+				37B6560130732FF500B9164F /* popup in Resources */,
 				37B655F630732FF500B9164F /* manifest.json in Resources */,
 				37B655F730732FF500B9164F /* fallback.js in Resources */,
 				37B655FC30732FF500B9164F /* background.js in Resources */,

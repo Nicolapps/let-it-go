@@ -10,6 +10,9 @@
     "256": "icons/icon-256.png",
     "512": "icons/icon-512.png"
   },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
   "permissions": ["declarativeNetRequest", "declarativeNetRequestWithHostAccess", "nativeMessaging"],
   "host_permissions": [
     "*://www.google.com/*",

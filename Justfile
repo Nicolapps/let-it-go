@@ -31,6 +31,7 @@ lint:
     jq empty extension/manifest.json extension/rules.json
     node --check extension/fallback.js
     node --check extension/background.js
+    node --check extension/popup/popup.js
     node -e 'for (const r of require("./extension/rules.json")) new RegExp(r.condition.regexFilter)'
     node scripts/generate-rules.js --check
 

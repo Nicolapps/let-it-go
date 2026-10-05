@@ -229,6 +229,10 @@ private struct RedirectTargetField: View {
                 }
             }
             .onAppear { draft = value }
+            // Saved from the extension's toolbar popover.
+            .onChange(of: value) { _, newValue in
+                if !isFocused { draft = newValue }
+            }
             .onChange(of: draft) { _, newDraft in
                 // Saving also rewrites the draft, which shouldn't hide its checkmark.
                 if feedback == .invalid || newDraft != value { feedback = nil }

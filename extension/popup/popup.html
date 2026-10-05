@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Let It Go</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <main>
+    <img class="icon" src="../icons/icon-256.png" alt="">
+    <h1>Let It Go</h1>
+    <label class="redirect">
+      <span>Redirect go/ to</span>
+      <span class="field">
+        <input id="redirect-base" type="text" placeholder="http://go" spellcheck="false" autocomplete="off" autocapitalize="off">
+        <span id="feedback" aria-live="polite"></span>
+      </span>
+    </label>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
