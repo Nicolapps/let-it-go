@@ -169,6 +169,8 @@ private struct RedirectTargetField: View {
         TextField("http://go", text: $draft)
             .textFieldStyle(.plain)
             .foregroundStyle(isDark ? .white : .black)
+            // Otherwise the selection and cursor are drawn for the dark window.
+            .environment(\.colorScheme, isDark ? .dark : .light)
             .padding(.horizontal, 8)
             .frame(height: 30)
             .background(isDark ? Color(hex: 0x1E1E22) : .white, in: .rect(cornerRadius: 8))
