@@ -357,7 +357,7 @@ private struct SafariSnippet<Content: View>: View {
             .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
             .overlay {
                 if showsHint {
-                    Label("Just a preview — do this in Safari", systemImage: "safari")
+                    Text("This is just a preview, do this in Safari")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(isDark ? .white : .black.opacity(0.85))
                         .lineLimit(1)
