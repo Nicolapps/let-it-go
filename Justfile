@@ -47,6 +47,10 @@ try url:
     }
     console.log("no rule matched (fallback.js may still handle it)");
 
+# Upload the code-signing and notarization secrets so CI publishes signed releases
+setup-signing:
+    scripts/setup-signing-secrets.sh
+
 # Remove build output
 clean:
     rm -rf {{derived}}

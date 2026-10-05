@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/icon.png" width="128" height="128" alt="Let It Go app icon">
+  <img src="docs/icon.webp" width="128" height="128" alt="Let It Go app icon">
 </p>
 
 <h1 align="center">Let It Go</h1>

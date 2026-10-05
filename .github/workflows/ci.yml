@@ -1,0 +1,267 @@
+name: CI
+
+# Pull requests: lint the extension and build the app.
+# Pushes to main (and manual runs): the same, then publish a signed, notarized Release build of
+# Let It Go.app as a GitHub release once both are green.
+#
+# Signing: the release job needs the repository secrets described in docs/ci-cd.md (run
+# `just setup-signing`). Unlike an ordinary app, an ad-hoc signed build is no use here: the app
+# group ID is hardcoded to the team, and Safari only loads unsigned extensions in developer mode.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # Never cancel a run on main part-way through publishing a release.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+defaults:
+  run:
+    shell: bash # explicit so that `set -o pipefail` is on for `xcodebuild | xcbeautify`
+
+env:
+  XCODE_PROJECT: Let It Go/Let It Go.xcodeproj
+  SCHEME: Let It Go
+  DERIVED_DATA: build/DerivedData
+
+jobs:
+  lint:
+    name: Lint extension
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # just is not on the runner image; install a pinned release and verify its checksum.
+      - name: Install just
+        env:
+          JUST_VERSION: 1.58.0
+          JUST_SHA256: 4a5cc2f53e6f0f8c59092a6cc38291eb729d46a7dd95d3ae582008881b84931d
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/just.tar.gz" \
+            "https://github.com/casey/just/releases/download/${JUST_VERSION}/just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          echo "${JUST_SHA256}  $RUNNER_TEMP/just.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/just.tar.gz" -C "$RUNNER_TEMP" just
+          "$RUNNER_TEMP/just" --version
+
+      - name: Lint
+        run: '"$RUNNER_TEMP/just" lint'
+
+  build:
+    name: Build
+    # Xcode 27 is required to open the project (objectVersion 110); this image is still in preview.
+    runs-on: xcode-27
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      # There are no tests, so this only checks that the app and extension compile.
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+  release:
+    name: Publish release
+    needs: [lint, build]
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: xcode-27
+    timeout-minutes: 45
+    permissions:
+      contents: write # create the release and upload its asset
+    env:
+      ARCHIVE_PATH: build/LetItGo.xcarchive
+      APP_PATH: build/LetItGo.xcarchive/Products/Applications/Let It Go.app
+    steps:
+      - name: Check signing secrets
+        env:
+          CERTIFICATE_P12_BASE64: ${{ secrets.MACOS_SIGNING_CERTIFICATE_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.MACOS_SIGNING_CERTIFICATE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          APP_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          missing=()
+          [ -n "$CERTIFICATE_P12_BASE64" ] || missing+=(MACOS_SIGNING_CERTIFICATE_P12)
+          [ -n "$CERTIFICATE_PASSWORD" ] || missing+=(MACOS_SIGNING_CERTIFICATE_PASSWORD)
+          [ -n "$APPLE_TEAM_ID" ] || missing+=(APPLE_TEAM_ID)
+          [ -n "$APPLE_ID" ] || missing+=(NOTARY_APPLE_ID)
+          [ -n "$APP_PASSWORD" ] || missing+=(NOTARY_PASSWORD)
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error title=Missing signing secrets::${missing[*]} not set. Run \`just setup-signing\` (see docs/ci-cd.md)."
+            exit 1
+          fi
+
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Determine version
+        id: version
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          marketing_version=$(
+            xcodebuild -project "$XCODE_PROJECT" -scheme "$SCHEME" -configuration Release \
+              -derivedDataPath "$DERIVED_DATA" -showBuildSettings 2>/dev/null \
+              | awk -F' = ' '/^ *MARKETING_VERSION = /{print $2; exit}'
+          )
+          if [ -z "$marketing_version" ]; then
+            echo "::error::Could not read MARKETING_VERSION from the Xcode project"
+            exit 1
+          fi
+          {
+            echo "marketing_version=$marketing_version"
+            echo "build_number=$BUILD_NUMBER"
+            echo "tag=v${marketing_version}-build.${BUILD_NUMBER}"
+            echo "asset=Let-It-Go-${marketing_version}-build.${BUILD_NUMBER}.zip"
+          } | tee -a "$GITHUB_OUTPUT"
+
+      - name: Import signing certificate
+        env:
+          CERTIFICATE_P12_BASE64: ${{ secrets.MACOS_SIGNING_CERTIFICATE_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.MACOS_SIGNING_CERTIFICATE_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          keychain_password=$(openssl rand -hex 32)
+          certificate="$RUNNER_TEMP/certificate.p12"
+          echo "$CERTIFICATE_P12_BASE64" | base64 --decode > "$certificate"
+
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$certificate" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain" > /dev/null
+          security list-keychain -d user -s "$keychain" login.keychain-db
+          rm -f "$certificate"
+
+          security find-identity -v -p codesigning "$keychain"
+
+      # The app group uses $(TeamIdentifierPrefix), which Developer ID can sign without a
+      # provisioning profile. The overrides apply to the embedded extension too.
+      - name: Archive
+        env:
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcodebuild archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            -archivePath "$ARCHIVE_PATH" \
+            "CURRENT_PROJECT_VERSION=$BUILD_NUMBER" \
+            CODE_SIGN_STYLE=Manual \
+            "CODE_SIGN_IDENTITY=Developer ID Application" \
+            "DEVELOPMENT_TEAM=$APPLE_TEAM_ID" \
+            PROVISIONING_PROFILE_SPECIFIER= \
+            OTHER_CODE_SIGN_FLAGS=--timestamp \
+            | xcbeautify --renderer github-actions
+
+          test -d "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          codesign -d --entitlements - "$APP_PATH"
+          codesign -d --entitlements - "$APP_PATH/Contents/PlugIns/Let It Go Extension.appex"
+
+      - name: Notarize
+        env:
+          APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          ditto -c -k --keepParent "$APP_PATH" build/notarize.zip
+          xcrun notarytool submit build/notarize.zip \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APP_PASSWORD" \
+            --wait
+          xcrun stapler staple "$APP_PATH"
+          spctl --assess --type execute --verbose=2 "$APP_PATH"
+
+      - name: Package
+        env:
+          ASSET: ${{ steps.version.outputs.asset }}
+        run: |
+          ditto -c -k --keepParent "$APP_PATH" "build/$ASSET"
+          ls -lh "build/$ASSET"
+
+      - name: Write release notes
+        env:
+          MARKETING_VERSION: ${{ steps.version.outputs.marketing_version }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          ASSET: ${{ steps.version.outputs.asset }}
+        run: |
+          {
+            echo "Let It Go ${MARKETING_VERSION} (build ${BUILD_NUMBER}), built from ${GITHUB_SHA} on \`${GITHUB_REF_NAME}\`."
+            echo
+            echo "Download \`${ASSET}\`, unzip it, move \`Let It Go.app\` to your Applications folder and open it,"
+            echo "then turn on the extension in Safari → Settings → Extensions."
+            echo
+          } > build/release-notes.md
+          cat build/release-notes.md
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          TITLE: Let It Go ${{ steps.version.outputs.marketing_version }} (${{ steps.version.outputs.build_number }})
+          ASSET: ${{ steps.version.outputs.asset }}
+        run: |
+          extra_flags=()
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            extra_flags+=(--latest)
+          else
+            extra_flags+=(--prerelease)
+          fi
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "Release $TAG already exists (re-run); replacing its asset"
+            gh release upload "$TAG" "build/$ASSET" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$TAG" "build/$ASSET" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "$TITLE" \
+              --notes-file build/release-notes.md \
+              --generate-notes \
+              "${extra_flags[@]}"
+          fi
+          echo "Published https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove signing keychain
+        if: always()
+        run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
