@@ -59,13 +59,16 @@ struct ContentView: View {
                     SetupStep(number: 2, isDone: status.isEnabled == true) {
                         StepText("Select *Let It Go*") {
                             SafariSnippet(action: openSettings) {
-                                HStack(spacing: 8) {
+                                // Measured on Safari's list: a 16 pt checkbox, 6 pt gap, icon
+                                // artwork 28 pt wide (the image has transparent margins, so
+                                // its frame is 34 pt), then 13 pt text 7 pt further.
+                                HStack(spacing: 3) {
                                     ReplicaCheckbox()
                                     Image(nsImage: NSApp.applicationIconImage)
                                         .resizable()
-                                        .frame(width: 28, height: 28)
+                                        .frame(width: 34, height: 34)
+                                        .padding(.vertical, -3)
                                     Text("Let It Go")
-                                        .font(.system(size: 14))
                                 }
                             }
                         }
