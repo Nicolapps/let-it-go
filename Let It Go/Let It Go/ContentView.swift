@@ -492,7 +492,10 @@ private extension View {
         if #available(macOS 26, *) {
             buttonStyle(.glass)
         } else {
-            buttonStyle(.bordered)
+            // Not `.bordered`: that's an AppKit button, which the window-wide drag
+            // and tap gestures keep from being clicked, and which looks disabled
+            // on this background.
+            buttonStyle(FrostedButtonStyle())
         }
     }
 
@@ -503,6 +506,25 @@ private extension View {
         } else {
             background(.ultraThinMaterial, in: .circle)
         }
+    }
+}
+
+/// Stands in for the glass button style before macOS 26, matching the frosted
+/// step badges.
+private struct FrostedButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .lineLimit(1)
+            .fixedSize()
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
+            .background(.ultraThinMaterial, in: .capsule)
+            .overlay {
+                Capsule().strokeBorder(.white.opacity(0.25))
+            }
+            .contentShape(.capsule)
+            .opacity(configuration.isPressed ? 0.7 : 1)
+            .animation(.smooth(duration: 0.15), value: configuration.isPressed)
     }
 }
 

@@ -89,7 +89,16 @@ class ViewController: NSViewController {
     }
 
     private func openSafariSettings() {
-        SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier)
+        SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
+            guard let error else { return }
+            // Safari can refuse, for instance before it has seen the extension.
+            // Bringing it up at least gets the user to its Settings.
+            NSLog("Couldn't show the extension in Safari Settings: %@", error.localizedDescription)
+            DispatchQueue.main.async {
+                guard let safari = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Safari") else { return }
+                NSWorkspace.shared.openApplication(at: safari, configuration: NSWorkspace.OpenConfiguration())
+            }
+        }
     }
 
 }
