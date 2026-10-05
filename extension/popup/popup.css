@@ -52,6 +52,24 @@ body {
   cursor: default;
 }
 
+/* On iPhone the popup is a sheet as wide as the screen, and Safari zooms into
+   fields with text smaller than 16 px. */
+@media (pointer: coarse) {
+  body {
+    width: auto;
+    min-width: 340px;
+  }
+
+  .redirect,
+  input {
+    font-size: 16px;
+  }
+
+  input {
+    height: 34px;
+  }
+}
+
 /* Not on body: Safari keeps the popover's own background, which a body
    background would go to. */
 body::before {

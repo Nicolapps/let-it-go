@@ -9,20 +9,13 @@ import Cocoa
 import SafariServices
 import SwiftUI
 
-let extensionBundleIdentifier = "dev.ettlin.nicolas.letitgo.extension"
-
-/// Shared with the extension, which reads the redirect target from here.
-let appGroup = "W47E2LS5Y9.dev.ettlin.nicolas.letitgo"
-
 class ViewController: NSViewController {
 
     private let status = ExtensionStatus()
 
-    /// Safari doesn't announce when the extension is turned on or off, so ask
-    /// it ten times a second while the window is up and the checklist updates while
-    /// the user is still in Safari Settings.
+    /// Asks Safari for the extension's state ten times a second while the window
+    /// is up.
     private var pollTimer: Timer?
-    private var isFetchingState = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,26 +59,7 @@ class ViewController: NSViewController {
     }
 
     @objc private func refreshState() {
-        // Polling this fast, Safari sometimes fails a request or answers them out
-        // of order, which made the checklist flicker. Keep one request in flight
-        // and hold on to the last known state when one fails.
-        if !isFetchingState {
-            isFetchingState = true
-            SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
-                DispatchQueue.main.async {
-                    self.isFetchingState = false
-                    if let state, self.status.isEnabled != state.isEnabled {
-                        self.status.isEnabled = state.isEnabled
-                    }
-                }
-            }
-        }
-
-        // Written by the extension whenever its website access changes.
-        let allowedOrigins = UserDefaults(suiteName: appGroup)?.stringArray(forKey: "allowedOrigins") ?? []
-        if status.allowsSearchEngine != !allowedOrigins.isEmpty {
-            status.allowsSearchEngine = !allowedOrigins.isEmpty
-        }
+        status.refresh()
     }
 
     private func openSafariSettings() {

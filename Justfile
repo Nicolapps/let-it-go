@@ -1,5 +1,6 @@
 project := "Let It Go/Let It Go.xcodeproj"
 scheme := "Let It Go"
+ios_scheme := "Let It Go (iOS)"
 derived := "build"
 
 # List available recipes
@@ -10,6 +11,11 @@ default:
 build config="Debug":
     xcodebuild -project "{{project}}" -scheme "{{scheme}}" -configuration {{config}} \
         -derivedDataPath {{derived}} -quiet build
+
+# Build the iOS app and extension for the simulator (config: Debug or Release)
+build-ios config="Debug":
+    xcodebuild -project "{{project}}" -scheme "{{ios_scheme}}" -configuration {{config}} \
+        -destination "generic/platform=iOS Simulator" -derivedDataPath {{derived}} -quiet build
 
 # Build, then launch the app so Safari picks up the extension
 run config="Debug": (build config) quit
