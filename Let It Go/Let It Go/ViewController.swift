@@ -22,6 +22,7 @@ class ViewController: NSViewController {
     /// it ten times a second while the window is up and the checklist updates while
     /// the user is still in Safari Settings.
     private var pollTimer: Timer?
+    private var isFetchingState = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,10 +66,17 @@ class ViewController: NSViewController {
     }
 
     @objc private func refreshState() {
-        SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
-            DispatchQueue.main.async {
-                if self.status.isEnabled != state?.isEnabled {
-                    self.status.isEnabled = state?.isEnabled
+        // Polling this fast, Safari sometimes fails a request or answers them out
+        // of order, which made the checklist flicker. Keep one request in flight
+        // and hold on to the last known state when one fails.
+        if !isFetchingState {
+            isFetchingState = true
+            SFSafariExtensionManager.getStateOfSafariExtension(withIdentifier: extensionBundleIdentifier) { state, error in
+                DispatchQueue.main.async {
+                    self.isFetchingState = false
+                    if let state, self.status.isEnabled != state.isEnabled {
+                        self.status.isEnabled = state.isEnabled
+                    }
                 }
             }
         }
