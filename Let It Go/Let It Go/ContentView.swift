@@ -437,7 +437,8 @@ private struct Snowfall: View {
         var x, phase, speed, size, opacity, sway: Double
     }
 
-    private let flakes: [Flake] = {
+    /// Kept in state so the parent re-rendering doesn't reshuffle the flakes.
+    @State private var flakes: [Flake] = {
         var rng = SystemRandomNumberGenerator()
         return (0..<45).map { _ in
             Flake(
