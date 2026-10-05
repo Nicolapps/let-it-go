@@ -89,14 +89,48 @@ class ViewController: NSViewController {
     }
 
     private func openSafariSettings() {
+        // Asked while Safari isn't running, Safari 18 launches but never brings
+        // up its Settings. Launch it first and ask once it's done launching.
+        if let safari = NSRunningApplication.runningApplications(withBundleIdentifier: safariBundleIdentifier).first {
+            whenFinishedLaunching(safari) { self.showExtensionInSafariSettings(attemptsLeft: 10) }
+            return
+        }
+        guard let safariURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: safariBundleIdentifier) else { return }
+        NSWorkspace.shared.openApplication(at: safariURL, configuration: NSWorkspace.OpenConfiguration()) { safari, error in
+            DispatchQueue.main.async {
+                guard let safari else {
+                    NSLog("Couldn't launch Safari: %@", error?.localizedDescription ?? "unknown error")
+                    return
+                }
+                self.whenFinishedLaunching(safari) { self.showExtensionInSafariSettings(attemptsLeft: 10) }
+            }
+        }
+    }
+
+    private let safariBundleIdentifier = "com.apple.Safari"
+    private var launchObservation: NSKeyValueObservation?
+
+    private func whenFinishedLaunching(_ app: NSRunningApplication, _ body: @escaping () -> Void) {
+        launchObservation = app.observe(\.isFinishedLaunching, options: [.initial]) { [weak self] app, _ in
+            guard app.isFinishedLaunching else { return }
+            DispatchQueue.main.async {
+                guard let self, self.launchObservation != nil else { return }
+                self.launchObservation = nil
+                body()
+            }
+        }
+    }
+
+    private func showExtensionInSafariSettings(attemptsLeft: Int) {
         SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
             guard let error else { return }
-            // Safari can refuse, for instance before it has seen the extension.
-            // Bringing it up at least gets the user to its Settings.
+            // Safari can refuse while it's still loading its extensions, so give
+            // it a few more tries. If it never comes around, at least Safari is up
+            // and the user can open its Settings themselves.
             NSLog("Couldn't show the extension in Safari Settings: %@", error.localizedDescription)
-            DispatchQueue.main.async {
-                guard let safari = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Safari") else { return }
-                NSWorkspace.shared.openApplication(at: safari, configuration: NSWorkspace.OpenConfiguration())
+            guard attemptsLeft > 1 else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showExtensionInSafariSettings(attemptsLeft: attemptsLeft - 1)
             }
         }
     }
