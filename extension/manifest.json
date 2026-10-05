@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Let It Go",
+  "description": "Opens go/ links instead of searching for them.",
+  "version": "1.0",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png",
+    "256": "icons/icon-256.png",
+    "512": "icons/icon-512.png"
+  },
+  "permissions": ["declarativeNetRequest"],
+  "host_permissions": [
+    "*://www.google.com/*",
+    "*://www.bing.com/*",
+    "*://duckduckgo.com/*",
+    "*://search.yahoo.com/*",
+    "*://www.ecosia.org/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "golinks", "enabled": true, "path": "rules.json" }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.google.com/search*",
+        "*://www.bing.com/search*",
+        "*://duckduckgo.com/*",
+        "*://search.yahoo.com/search*",
+        "*://www.ecosia.org/search*"
+      ],
+      "js": ["fallback.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

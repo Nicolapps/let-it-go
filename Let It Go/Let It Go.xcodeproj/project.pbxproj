@@ -1,0 +1,589 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		37B655C730732FF300B9164F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655C630732FF300B9164F /* AppDelegate.swift */; };
+		37B655CB30732FF300B9164F /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 37B655C930732FF300B9164F /* Main.html */; };
+		37B655CD30732FF300B9164F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B655CC30732FF300B9164F /* Icon.png */; };
+		37B655CF30732FF300B9164F /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 37B655CE30732FF300B9164F /* Style.css */; };
+		37B655D130732FF300B9164F /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D030732FF300B9164F /* Script.js */; };
+		37B655D330732FF300B9164F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655D230732FF300B9164F /* ViewController.swift */; };
+		37B655D630732FF300B9164F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D430732FF300B9164F /* Main.storyboard */; };
+		37B655D830732FF400B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D730732FF400B9164F /* Assets.xcassets */; };
+		37B655DF30732FF400B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37B655DE30732FF400B9164F /* Let It Go Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		37B655E430732FF400B9164F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */; };
+		37B655F430732FF500B9164F /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F030732FF500B9164F /* icons */; };
+		37B655F530732FF500B9164F /* rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F130732FF500B9164F /* rules.json */; };
+		37B655F630732FF500B9164F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F230732FF500B9164F /* manifest.json */; };
+		37B655F730732FF500B9164F /* fallback.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F330732FF500B9164F /* fallback.js */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		37B655E030732FF400B9164F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37B655BB30732FF300B9164F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37B655DD30732FF400B9164F;
+			remoteInfo = "Let It Go Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		37B655EB30732FF400B9164F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				37B655DF30732FF400B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		37B655C330732FF300B9164F /* Let It Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let It Go.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37B655C630732FF300B9164F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		37B655CA30732FF300B9164F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		37B655CC30732FF300B9164F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		37B655CE30732FF300B9164F /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		37B655D030732FF300B9164F /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		37B655D230732FF300B9164F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		37B655D530732FF300B9164F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		37B655D730732FF400B9164F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37B655D930732FF400B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37B655DE30732FF400B9164F /* Let It Go Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Let It Go Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		37B655E530732FF400B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37B655F030732FF500B9164F /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../extension/icons; sourceTree = "<group>"; };
+		37B655F130732FF500B9164F /* rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = rules.json; path = ../../extension/rules.json; sourceTree = "<group>"; };
+		37B655F230732FF500B9164F /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../extension/manifest.json; sourceTree = "<group>"; };
+		37B655F330732FF500B9164F /* fallback.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = fallback.js; path = ../../extension/fallback.js; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37B655C030732FF300B9164F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		37B655DB30732FF400B9164F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		37B655BA30732FF300B9164F = {
+			isa = PBXGroup;
+			children = (
+				37B655C530732FF300B9164F /* Let It Go */,
+				37B655E230732FF400B9164F /* Let It Go Extension */,
+				37B655C430732FF300B9164F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		37B655C430732FF300B9164F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37B655C330732FF300B9164F /* Let It Go.app */,
+				37B655DE30732FF400B9164F /* Let It Go Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		37B655C530732FF300B9164F /* Let It Go */ = {
+			isa = PBXGroup;
+			children = (
+				37B655C630732FF300B9164F /* AppDelegate.swift */,
+				37B655D230732FF300B9164F /* ViewController.swift */,
+				37B655D430732FF300B9164F /* Main.storyboard */,
+				37B655D730732FF400B9164F /* Assets.xcassets */,
+				37B655D930732FF400B9164F /* Info.plist */,
+				37B655C830732FF300B9164F /* Resources */,
+			);
+			path = "Let It Go";
+			sourceTree = "<group>";
+		};
+		37B655C830732FF300B9164F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37B655C930732FF300B9164F /* Main.html */,
+				37B655CC30732FF300B9164F /* Icon.png */,
+				37B655CE30732FF300B9164F /* Style.css */,
+				37B655D030732FF300B9164F /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		37B655E230732FF400B9164F /* Let It Go Extension */ = {
+			isa = PBXGroup;
+			children = (
+				37B655EF30732FF500B9164F /* Resources */,
+				37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */,
+				37B655E530732FF400B9164F /* Info.plist */,
+			);
+			path = "Let It Go Extension";
+			sourceTree = "<group>";
+		};
+		37B655EF30732FF500B9164F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37B655F030732FF500B9164F /* icons */,
+				37B655F130732FF500B9164F /* rules.json */,
+				37B655F230732FF500B9164F /* manifest.json */,
+				37B655F330732FF500B9164F /* fallback.js */,
+			);
+			name = Resources;
+			path = "Let It Go Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		37B655C230732FF300B9164F /* Let It Go */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37B655EC30732FF400B9164F /* Build configuration list for PBXNativeTarget "Let It Go" */;
+			buildPhases = (
+				37B655BF30732FF300B9164F /* Sources */,
+				37B655C030732FF300B9164F /* Frameworks */,
+				37B655C130732FF300B9164F /* Resources */,
+				37B655EB30732FF400B9164F /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				37B655E130732FF400B9164F /* PBXTargetDependency */,
+			);
+			name = "Let It Go";
+			productName = "Let It Go";
+			productReference = 37B655C330732FF300B9164F /* Let It Go.app */;
+			productType = "com.apple.product-type.application";
+		};
+		37B655DD30732FF400B9164F /* Let It Go Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37B655E830732FF400B9164F /* Build configuration list for PBXNativeTarget "Let It Go Extension" */;
+			buildPhases = (
+				37B655DA30732FF400B9164F /* Sources */,
+				37B655DB30732FF400B9164F /* Frameworks */,
+				37B655DC30732FF400B9164F /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Let It Go Extension";
+			productName = "Let It Go Extension";
+			productReference = 37B655DE30732FF400B9164F /* Let It Go Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		37B655BB30732FF300B9164F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					37B655C230732FF300B9164F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					37B655DD30732FF400B9164F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 37B655BE30732FF300B9164F /* Build configuration list for PBXProject "Let It Go" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 37B655BA30732FF300B9164F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 37B655C430732FF300B9164F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				37B655C230732FF300B9164F /* Let It Go */,
+				37B655DD30732FF400B9164F /* Let It Go Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		37B655C130732FF300B9164F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				37B655CD30732FF300B9164F /* Icon.png in Resources */,
+				37B655D630732FF300B9164F /* Main.storyboard in Resources */,
+				37B655D130732FF300B9164F /* Script.js in Resources */,
+				37B655CB30732FF300B9164F /* Main.html in Resources */,
+				37B655D830732FF400B9164F /* Assets.xcassets in Resources */,
+				37B655CF30732FF300B9164F /* Style.css in Resources */,
+			);
+		};
+		37B655DC30732FF400B9164F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				37B655F430732FF500B9164F /* icons in Resources */,
+				37B655F630732FF500B9164F /* manifest.json in Resources */,
+				37B655F730732FF500B9164F /* fallback.js in Resources */,
+				37B655F530732FF500B9164F /* rules.json in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		37B655BF30732FF300B9164F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				37B655D330732FF300B9164F /* ViewController.swift in Sources */,
+				37B655C730732FF300B9164F /* AppDelegate.swift in Sources */,
+			);
+		};
+		37B655DA30732FF400B9164F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				37B655E430732FF400B9164F /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		37B655E130732FF400B9164F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37B655DD30732FF400B9164F /* Let It Go Extension */;
+			targetProxy = 37B655E030732FF400B9164F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		37B655C930732FF300B9164F /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				37B655CA30732FF300B9164F /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		37B655D430732FF300B9164F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				37B655D530732FF300B9164F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		37B655E630732FF400B9164F /* Debug configuration for PBXProject "Let It Go" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		37B655E730732FF400B9164F /* Release configuration for PBXProject "Let It Go" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		37B655E930732FF400B9164F /* Debug configuration for PBXNativeTarget "Let It Go Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		37B655EA30732FF400B9164F /* Release configuration for PBXNativeTarget "Let It Go Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		37B655ED30732FF400B9164F /* Debug configuration for PBXNativeTarget "Let It Go" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Let It Go/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		37B655EE30732FF400B9164F /* Release configuration for PBXNativeTarget "Let It Go" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Let It Go/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicolasettlin.LetItGo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		37B655BE30732FF300B9164F /* Build configuration list for PBXProject "Let It Go" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37B655E630732FF400B9164F /* Debug configuration for PBXProject "Let It Go" */,
+				37B655E730732FF400B9164F /* Release configuration for PBXProject "Let It Go" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		37B655E830732FF400B9164F /* Build configuration list for PBXNativeTarget "Let It Go Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37B655E930732FF400B9164F /* Debug configuration for PBXNativeTarget "Let It Go Extension" */,
+				37B655EA30732FF400B9164F /* Release configuration for PBXNativeTarget "Let It Go Extension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		37B655EC30732FF400B9164F /* Build configuration list for PBXNativeTarget "Let It Go" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37B655ED30732FF400B9164F /* Debug configuration for PBXNativeTarget "Let It Go" */,
+				37B655EE30732FF400B9164F /* Release configuration for PBXNativeTarget "Let It Go" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 37B655BB30732FF300B9164F /* Project object */;
+	validationLevel = 1;
+}
