@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		37B655C730732FF300B9164F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655C630732FF300B9164F /* AppDelegate.swift */; };
-		37B655CB30732FF300B9164F /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 37B655C930732FF300B9164F /* Main.html */; };
-		37B655CD30732FF300B9164F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B655CC30732FF300B9164F /* Icon.png */; };
-		37B655CF30732FF300B9164F /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 37B655CE30732FF300B9164F /* Style.css */; };
-		37B655D130732FF300B9164F /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D030732FF300B9164F /* Script.js */; };
 		37B655D330732FF300B9164F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655D230732FF300B9164F /* ViewController.swift */; };
 		37B655FA30732FF500B9164F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655FB30732FF500B9164F /* ContentView.swift */; };
 		37B655D630732FF300B9164F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D430732FF300B9164F /* Main.storyboard */; };
@@ -50,10 +46,6 @@
 /* Begin PBXFileReference section */
 		37B655C330732FF300B9164F /* Let It Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let It Go.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B655C630732FF300B9164F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		37B655CA30732FF300B9164F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
-		37B655CC30732FF300B9164F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		37B655CE30732FF300B9164F /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
-		37B655D030732FF300B9164F /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
 		37B655D230732FF300B9164F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		37B655FB30732FF500B9164F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		37B655D530732FF300B9164F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -111,20 +103,8 @@
 				37B655D730732FF400B9164F /* Assets.xcassets */,
 				37B655F930732FF500B9164F /* AppIcon.icon */,
 				37B655D930732FF400B9164F /* Info.plist */,
-				37B655C830732FF300B9164F /* Resources */,
 			);
 			path = "Let It Go";
-			sourceTree = "<group>";
-		};
-		37B655C830732FF300B9164F /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				37B655C930732FF300B9164F /* Main.html */,
-				37B655CC30732FF300B9164F /* Icon.png */,
-				37B655CE30732FF300B9164F /* Style.css */,
-				37B655D030732FF300B9164F /* Script.js */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		37B655E230732FF400B9164F /* Let It Go Extension */ = {
@@ -228,13 +208,9 @@
 		37B655C130732FF300B9164F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				37B655CD30732FF300B9164F /* Icon.png in Resources */,
 				37B655D630732FF300B9164F /* Main.storyboard in Resources */,
-				37B655D130732FF300B9164F /* Script.js in Resources */,
-				37B655CB30732FF300B9164F /* Main.html in Resources */,
 				37B655D830732FF400B9164F /* Assets.xcassets in Resources */,
 				37B655F830732FF500B9164F /* AppIcon.icon in Resources */,
-				37B655CF30732FF300B9164F /* Style.css in Resources */,
 			);
 		};
 		37B655DC30732FF400B9164F /* Resources */ = {
@@ -274,14 +250,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		37B655C930732FF300B9164F /* Main.html */ = {
-			isa = PBXVariantGroup;
-			children = (
-				37B655CA30732FF300B9164F /* Base */,
-			);
-			name = Main.html;
-			sourceTree = "<group>";
-		};
 		37B655D430732FF300B9164F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
