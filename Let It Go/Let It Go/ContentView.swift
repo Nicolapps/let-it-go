@@ -57,7 +57,7 @@ struct ContentView: View {
                     }
 
                     SetupStep(number: 2, isDone: status.isEnabled == true) {
-                        StepText("Select *Let It Go*") {
+                        StepText("Select the checkbox next to *Let It Go*") {
                             SafariSnippet(action: openSettings) {
                                 // Measured on Safari's list: a 16 pt checkbox, 6 pt gap, icon
                                 // artwork 28 pt wide (the image has transparent margins, so
