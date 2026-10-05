@@ -9,6 +9,9 @@ import SwiftUI
 final class ExtensionStatus {
     /// `nil` until Safari reports the extension's state.
     var isEnabled: Bool?
+    /// Whether the extension may run on at least one search engine, as last
+    /// reported by the extension.
+    var allowsSearchEngine = false
 }
 
 struct ContentView: View {
@@ -74,7 +77,9 @@ struct ContentView: View {
                         }
                     }
 
-                    SetupStep(number: 3, isDone: false) {
+                    // Clicking Edit Websites… leaves no trace, so step 3 ticks along
+                    // with step 4.
+                    SetupStep(number: 3, isDone: allowsSearchEngine) {
                         StepText("Click *Edit Websites…*") {
                             SafariSnippet(action: openSettings) {
                                 ReplicaButton { Text("Edit Websites…") }
@@ -82,7 +87,7 @@ struct ContentView: View {
                         }
                     }
 
-                    SetupStep(number: 4, isDone: false) {
+                    SetupStep(number: 4, isDone: allowsSearchEngine) {
                         StepText("Choose *Allow* for your search engine") {
                             SafariSnippet(action: openSettings) {
                                 HStack(spacing: 6) {
@@ -127,6 +132,13 @@ struct ContentView: View {
         .environment(\.colorScheme, .dark)
         .animation(.smooth, value: status.isEnabled)
         .animation(.smooth, value: openedSettings)
+        .animation(.smooth, value: allowsSearchEngine)
+    }
+
+    /// Only trusted while the extension is on, since it can't report changes
+    /// made while it's off.
+    private var allowsSearchEngine: Bool {
+        status.isEnabled == true && status.allowsSearchEngine
     }
 
     private func openSettings() {

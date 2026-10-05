@@ -32,8 +32,16 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         os_log(.default, "Received message from browser.runtime.sendNativeMessage: %@ (profile: %@)", String(describing: message), profile?.uuidString ?? "none")
 
+        let defaults = UserDefaults(suiteName: appGroup)
+
+        // background.js reports which search engines it may run on, so the app
+        // can tick off the "Edit Websites…" steps.
+        if let message = message as? [String: Any], message["type"] as? String == "allowedOrigins" {
+            defaults?.set(message["origins"] as? [String] ?? [], forKey: "allowedOrigins")
+        }
+
         // Written by the app's "Redirect go/ to" field.
-        let redirectBase = UserDefaults(suiteName: appGroup)?.string(forKey: "redirectBase")
+        let redirectBase = defaults?.string(forKey: "redirectBase")
 
         let response = NSExtensionItem()
         if #available(iOS 15.0, macOS 11.0, *) {

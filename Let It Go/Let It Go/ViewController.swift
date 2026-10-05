@@ -72,6 +72,12 @@ class ViewController: NSViewController {
                 }
             }
         }
+
+        // Written by the extension whenever its website access changes.
+        let allowedOrigins = UserDefaults(suiteName: appGroup)?.stringArray(forKey: "allowedOrigins") ?? []
+        if status.allowsSearchEngine != !allowedOrigins.isEmpty {
+            status.allowsSearchEngine = !allowedOrigins.isEmpty
+        }
     }
 
     private func openSafariSettings() {

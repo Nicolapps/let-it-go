@@ -42,10 +42,26 @@ async function syncRules() {
   return base;
 }
 
+// Tells the app which search engines the user has allowed in Safari Settings ›
+// Extensions › Edit Websites…, for its setup checklist.
+async function reportAllowedOrigins() {
+  const origins = [];
+  for (const origin of browser.runtime.getManifest().host_permissions) {
+    if (await browser.permissions.contains({ origins: [origin] })) origins.push(origin);
+  }
+  console.log("Allowed origins:", origins);
+  await browser.runtime.sendNativeMessage("application.id", { type: "allowedOrigins", origins });
+}
+
 browser.runtime.onInstalled.addListener(syncRules);
 browser.runtime.onStartup.addListener(syncRules);
 // Coming back to Safari after changing the target in the app.
 browser.windows.onFocusChanged.addListener(syncRules);
+
+reportAllowedOrigins();
+browser.permissions.onAdded.addListener(reportAllowedOrigins);
+browser.permissions.onRemoved.addListener(reportAllowedOrigins);
+browser.windows.onFocusChanged.addListener(reportAllowedOrigins);
 
 // fallback.js asks for the target before redirecting, which also keeps the
 // rules fresh on every search.
