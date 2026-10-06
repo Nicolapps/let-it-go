@@ -23,6 +23,28 @@
 		37B655FC30732FF500B9164F /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655FD30732FF500B9164F /* background.js */; };
 		37B6560330732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560230732FF500B9164F /* PrivacyInfo.xcprivacy */; };
 		37B6560530732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560430732FF500B9164F /* PrivacyInfo.xcprivacy */; };
+		37B6562D30732FF500B9164F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561030732FF500B9164F /* AppGroup.swift */; };
+		37B6562E30732FF500B9164F /* ExtensionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561130732FF500B9164F /* ExtensionStatus.swift */; };
+		37B6562F30732FF500B9164F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561030732FF500B9164F /* AppGroup.swift */; };
+		37B6563030732FF500B9164F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561030732FF500B9164F /* AppGroup.swift */; };
+		37B6563130732FF500B9164F /* ExtensionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561130732FF500B9164F /* ExtensionStatus.swift */; };
+		37B6563230732FF500B9164F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655FB30732FF500B9164F /* ContentView.swift */; };
+		37B6563330732FF500B9164F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561230732FF500B9164F /* AppDelegate.swift */; };
+		37B6563430732FF500B9164F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561330732FF500B9164F /* ViewController.swift */; };
+		37B6563530732FF500B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D730732FF400B9164F /* Assets.xcassets */; };
+		37B6563630732FF500B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B6561430732FF500B9164F /* Assets.xcassets */; };
+		37B6563730732FF500B9164F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F930732FF500B9164F /* AppIcon.icon */; };
+		37B6563830732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560230732FF500B9164F /* PrivacyInfo.xcprivacy */; };
+		37B6563930732FF500B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37B6561930732FF500B9164F /* Let It Go Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		37B6563A30732FF500B9164F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */; };
+		37B6563B30732FF500B9164F /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561030732FF500B9164F /* AppGroup.swift */; };
+		37B6563C30732FF500B9164F /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F030732FF500B9164F /* icons */; };
+		37B6563D30732FF500B9164F /* popup in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560030732FF500B9164F /* popup */; };
+		37B6563E30732FF500B9164F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F230732FF500B9164F /* manifest.json */; };
+		37B6563F30732FF500B9164F /* fallback.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F330732FF500B9164F /* fallback.js */; };
+		37B6564030732FF500B9164F /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37B655FD30732FF500B9164F /* background.js */; };
+		37B6564130732FF500B9164F /* rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F130732FF500B9164F /* rules.json */; };
+		37B6564230732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560430732FF500B9164F /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +55,13 @@
 			remoteGlobalIDString = 37B655DD30732FF400B9164F;
 			remoteInfo = "Let It Go Extension";
 		};
+		37B6562530732FF500B9164F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37B655BB30732FF300B9164F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37B6561D30732FF500B9164F;
+			remoteInfo = "Let It Go Extension (iOS)";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +71,15 @@
 			dstSubfolder = PlugIns;
 			files = (
 				37B655DF30732FF400B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		37B6562130732FF500B9164F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				37B6563930732FF500B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 		};
@@ -69,6 +107,16 @@
 		37B655FF30732FF500B9164F /* Let It Go Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go Extension.entitlements"; sourceTree = "<group>"; };
 		37B6560230732FF500B9164F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		37B6560430732FF500B9164F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		37B6561030732FF500B9164F /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		37B6561130732FF500B9164F /* ExtensionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionStatus.swift; sourceTree = "<group>"; };
+		37B6561230732FF500B9164F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		37B6561330732FF500B9164F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		37B6561430732FF500B9164F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37B6561530732FF500B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37B6561630732FF500B9164F /* Let It Go.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go.entitlements"; sourceTree = "<group>"; };
+		37B6561730732FF500B9164F /* Let It Go Extension (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go Extension (iOS).entitlements"; sourceTree = "<group>"; };
+		37B6561830732FF500B9164F /* Let It Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let It Go.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37B6561930732FF500B9164F /* Let It Go Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Let It Go Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,13 +130,25 @@
 			files = (
 			);
 		};
+		37B6561F30732FF500B9164F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		37B6562330732FF500B9164F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		37B655BA30732FF300B9164F = {
 			isa = PBXGroup;
 			children = (
+				37B6561A30732FF500B9164F /* Shared */,
 				37B655C530732FF300B9164F /* Let It Go */,
+				37B6561B30732FF500B9164F /* Let It Go (iOS) */,
 				37B655E230732FF400B9164F /* Let It Go Extension */,
 				37B655C430732FF300B9164F /* Products */,
 			);
@@ -99,6 +159,8 @@
 			children = (
 				37B655C330732FF300B9164F /* Let It Go.app */,
 				37B655DE30732FF400B9164F /* Let It Go Extension.appex */,
+				37B6561830732FF500B9164F /* Let It Go.app */,
+				37B6561930732FF500B9164F /* Let It Go Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +171,7 @@
 				37B655C630732FF300B9164F /* AppDelegate.swift */,
 				37B655D230732FF300B9164F /* ViewController.swift */,
 				37B655FB30732FF500B9164F /* ContentView.swift */,
+				37B6561130732FF500B9164F /* ExtensionStatus.swift */,
 				37B655D430732FF300B9164F /* Main.storyboard */,
 				37B655D730732FF400B9164F /* Assets.xcassets */,
 				37B655F930732FF500B9164F /* AppIcon.icon */,
@@ -126,6 +189,7 @@
 				37B655E330732FF400B9164F /* SafariWebExtensionHandler.swift */,
 				37B655E530732FF400B9164F /* Info.plist */,
 				37B655FF30732FF500B9164F /* Let It Go Extension.entitlements */,
+				37B6561730732FF500B9164F /* Let It Go Extension (iOS).entitlements */,
 				37B6560430732FF500B9164F /* PrivacyInfo.xcprivacy */,
 			);
 			path = "Let It Go Extension";
@@ -144,6 +208,26 @@
 			name = Resources;
 			path = "Let It Go Extension";
 			sourceTree = SOURCE_ROOT;
+		};
+		37B6561A30732FF500B9164F /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				37B6561030732FF500B9164F /* AppGroup.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		37B6561B30732FF500B9164F /* Let It Go (iOS) */ = {
+			isa = PBXGroup;
+			children = (
+				37B6561230732FF500B9164F /* AppDelegate.swift */,
+				37B6561330732FF500B9164F /* ViewController.swift */,
+				37B6561430732FF500B9164F /* Assets.xcassets */,
+				37B6561530732FF500B9164F /* Info.plist */,
+				37B6561630732FF500B9164F /* Let It Go.entitlements */,
+			);
+			path = "Let It Go (iOS)";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -182,6 +266,40 @@
 			productReference = 37B655DE30732FF400B9164F /* Let It Go Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		37B6561C30732FF500B9164F /* Let It Go (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37B6562730732FF500B9164F /* Build configuration list for PBXNativeTarget "Let It Go (iOS)" */;
+			buildPhases = (
+				37B6561E30732FF500B9164F /* Sources */,
+				37B6561F30732FF500B9164F /* Frameworks */,
+				37B6562030732FF500B9164F /* Resources */,
+				37B6562130732FF500B9164F /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				37B6562630732FF500B9164F /* PBXTargetDependency */,
+			);
+			name = "Let It Go (iOS)";
+			productName = "Let It Go";
+			productReference = 37B6561830732FF500B9164F /* Let It Go.app */;
+			productType = "com.apple.product-type.application";
+		};
+		37B6561D30732FF500B9164F /* Let It Go Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37B6562A30732FF500B9164F /* Build configuration list for PBXNativeTarget "Let It Go Extension (iOS)" */;
+			buildPhases = (
+				37B6562230732FF500B9164F /* Sources */,
+				37B6562330732FF500B9164F /* Frameworks */,
+				37B6562430732FF500B9164F /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "Let It Go Extension (iOS)";
+			productName = "Let It Go Extension";
+			productReference = 37B6561930732FF500B9164F /* Let It Go Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -196,6 +314,12 @@
 						CreatedOnToolsVersion = 27.0;
 					};
 					37B655DD30732FF400B9164F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					37B6561C30732FF500B9164F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					37B6561D30732FF500B9164F = {
 						CreatedOnToolsVersion = 27.0;
 					};
 				};
@@ -216,6 +340,8 @@
 			targets = (
 				37B655C230732FF300B9164F /* Let It Go */,
 				37B655DD30732FF400B9164F /* Let It Go Extension */,
+				37B6561C30732FF500B9164F /* Let It Go (iOS) */,
+				37B6561D30732FF500B9164F /* Let It Go Extension (iOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -242,6 +368,27 @@
 				37B6560530732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 		};
+		37B6562030732FF500B9164F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				37B6563530732FF500B9164F /* Assets.xcassets in Resources */,
+				37B6563630732FF500B9164F /* Assets.xcassets in Resources */,
+				37B6563730732FF500B9164F /* AppIcon.icon in Resources */,
+				37B6563830732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */,
+			);
+		};
+		37B6562430732FF500B9164F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				37B6563C30732FF500B9164F /* icons in Resources */,
+				37B6563D30732FF500B9164F /* popup in Resources */,
+				37B6563E30732FF500B9164F /* manifest.json in Resources */,
+				37B6563F30732FF500B9164F /* fallback.js in Resources */,
+				37B6564030732FF500B9164F /* background.js in Resources */,
+				37B6564130732FF500B9164F /* rules.json in Resources */,
+				37B6564230732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */,
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -251,12 +398,32 @@
 				37B655D330732FF300B9164F /* ViewController.swift in Sources */,
 				37B655FA30732FF500B9164F /* ContentView.swift in Sources */,
 				37B655C730732FF300B9164F /* AppDelegate.swift in Sources */,
+				37B6562D30732FF500B9164F /* AppGroup.swift in Sources */,
+				37B6562E30732FF500B9164F /* ExtensionStatus.swift in Sources */,
 			);
 		};
 		37B655DA30732FF400B9164F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 				37B655E430732FF400B9164F /* SafariWebExtensionHandler.swift in Sources */,
+				37B6562F30732FF500B9164F /* AppGroup.swift in Sources */,
+			);
+		};
+		37B6561E30732FF500B9164F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				37B6563030732FF500B9164F /* AppGroup.swift in Sources */,
+				37B6563130732FF500B9164F /* ExtensionStatus.swift in Sources */,
+				37B6563230732FF500B9164F /* ContentView.swift in Sources */,
+				37B6563330732FF500B9164F /* AppDelegate.swift in Sources */,
+				37B6563430732FF500B9164F /* ViewController.swift in Sources */,
+			);
+		};
+		37B6562230732FF500B9164F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				37B6563A30732FF500B9164F /* SafariWebExtensionHandler.swift in Sources */,
+				37B6563B30732FF500B9164F /* AppGroup.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
@@ -266,6 +433,11 @@
 			isa = PBXTargetDependency;
 			target = 37B655DD30732FF400B9164F /* Let It Go Extension */;
 			targetProxy = 37B655E030732FF400B9164F /* PBXContainerItemProxy */;
+		};
+		37B6562630732FF500B9164F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37B6561D30732FF500B9164F /* Let It Go Extension (iOS) */;
+			targetProxy = 37B6562530732FF500B9164F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -557,6 +729,168 @@
 			};
 			name = Release;
 		};
+		37B6562830732FF500B9164F /* Debug configuration for PBXNativeTarget "Let It Go (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W47E2LS5Y9;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go (iOS)/Let It Go.entitlements";
+				INFOPLIST_FILE = "Let It Go (iOS)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo;
+				PRODUCT_NAME = "Let It Go";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		37B6562930732FF500B9164F /* Release configuration for PBXNativeTarget "Let It Go (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W47E2LS5Y9;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go (iOS)/Let It Go.entitlements";
+				INFOPLIST_FILE = "Let It Go (iOS)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo;
+				PRODUCT_NAME = "Let It Go";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		37B6562B30732FF500B9164F /* Debug configuration for PBXNativeTarget "Let It Go Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W47E2LS5Y9;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension (iOS).entitlements";
+				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo.extension;
+				PRODUCT_NAME = "Let It Go Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		37B6562C30732FF500B9164F /* Release configuration for PBXNativeTarget "Let It Go Extension (iOS)" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W47E2LS5Y9;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Let It Go Extension/Let It Go Extension (iOS).entitlements";
+				INFOPLIST_FILE = "Let It Go Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Let It Go Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Nicolas Ettlin";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ettlin.nicolas.letitgo.extension;
+				PRODUCT_NAME = "Let It Go Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -581,6 +915,22 @@
 			buildConfigurations = (
 				37B655ED30732FF400B9164F /* Debug configuration for PBXNativeTarget "Let It Go" */,
 				37B655EE30732FF400B9164F /* Release configuration for PBXNativeTarget "Let It Go" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		37B6562730732FF500B9164F /* Build configuration list for PBXNativeTarget "Let It Go (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37B6562830732FF500B9164F /* Debug configuration for PBXNativeTarget "Let It Go (iOS)" */,
+				37B6562930732FF500B9164F /* Release configuration for PBXNativeTarget "Let It Go (iOS)" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		37B6562A30732FF500B9164F /* Build configuration list for PBXNativeTarget "Let It Go Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37B6562B30732FF500B9164F /* Debug configuration for PBXNativeTarget "Let It Go Extension (iOS)" */,
+				37B6562C30732FF500B9164F /* Release configuration for PBXNativeTarget "Let It Go Extension (iOS)" */,
 			);
 			defaultConfigurationName = Release;
 		};

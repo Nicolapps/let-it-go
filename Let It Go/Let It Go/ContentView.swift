@@ -4,15 +4,9 @@
 //
 
 import SwiftUI
-
-@Observable
-final class ExtensionStatus {
-    /// `nil` until Safari reports the extension's state.
-    var isEnabled: Bool?
-    /// Whether the extension may run on at least one search engine, as last
-    /// reported by the extension.
-    var allowsSearchEngine = false
-}
+#if os(iOS)
+import UIKit
+#endif
 
 struct ContentView: View {
     var status: ExtensionStatus
@@ -21,13 +15,70 @@ struct ContentView: View {
     @State private var openedSettings = false
     @AppStorage("redirectBase", store: UserDefaults(suiteName: appGroup)) private var redirectBase = "http://go"
 
+    #if os(macOS)
+    /// The window is always dark, so its environment can't tell.
+    @State private var appearance = SystemAppearance()
+    private var systemIsDark: Bool { appearance.isDark }
+    #else
+    /// Read above the dark override below, so it's still the system's.
+    @Environment(\.colorScheme) private var systemColorScheme
+    private var systemIsDark: Bool { systemColorScheme == .dark }
+    #endif
+
     var body: some View {
+        page
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background {
+                ZStack {
+                    AuroraBackground()
+                    Snowfall()
+                }
+                .ignoresSafeArea()
+            }
+            .contentShape(.rect)
+            #if os(macOS)
+            // Dragging anywhere that isn't a control moves the window, and clicking
+            // ends an edit of the redirect target.
+            .gesture(WindowDragGesture())
+            .onTapGesture { NSApp.keyWindow?.makeFirstResponder(nil) }
+            #else
+            // Tapping anywhere that isn't a control ends an edit of the redirect
+            // target.
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+            #endif
+            .environment(\.systemIsDark, systemIsDark)
+            .environment(\.colorScheme, .dark)
+            .animation(.smooth, value: status.isEnabled)
+            .animation(.smooth, value: openedSettings)
+            .animation(.smooth, value: allowsSearchEngine)
+    }
+
+    @ViewBuilder
+    private var page: some View {
+        #if os(macOS)
+        content
+        #else
+        // The checklist doesn't fit smaller iPhones, or any in landscape.
+        GeometryReader { proxy in
+            ScrollView {
+                content
+                    .frame(maxWidth: .infinity, minHeight: proxy.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollDismissesKeyboard(.interactively)
+        }
+        #endif
+    }
+
+    private var content: some View {
         VStack(spacing: 0) {
             Spacer(minLength: 24)
 
-            Image(nsImage: NSApp.applicationIconImage)
-                .resizable()
-                .frame(width: 112, height: 112)
+            AppIcon()
+                .frame(width: Self.iconSize, height: Self.iconSize)
                 .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
             VStack(spacing: 28) {
@@ -48,95 +99,150 @@ struct ContentView: View {
 
             GlassContainer(spacing: 12) {
                 VStack(alignment: .leading, spacing: 22) {
-                    SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
-                        Button(action: openSettings) {
-                            Label("Open Safari Settings › *Extensions*", systemImage: "safari")
-                                .font(.headline)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                        }
-                        .glassButtonStyle()
-                        .controlSize(.extraLarge)
-                    }
+                    setupSteps
+                }
+            }
+            .frame(maxWidth: 320, alignment: .leading)
 
-                    SetupStep(number: 2, isDone: status.isEnabled == true) {
-                        StepText("Select the checkbox next to *Let It Go*") {
-                            SafariSnippet {
-                                // Measured on Safari's list: a 16 pt checkbox, 6 pt gap, icon
-                                // artwork 28 pt wide (the image has transparent margins, so
-                                // its frame is 34 pt), then 13 pt text 7 pt further.
-                                HStack(spacing: 3) {
-                                    ReplicaCheckbox()
-                                    Image(nsImage: NSApp.applicationIconImage)
-                                        .resizable()
-                                        .frame(width: 34, height: 34)
-                                        .padding(.vertical, -3)
-                                    Text("Let It Go")
-                                }
-                            }
-                        }
-                    }
+            Spacer(minLength: 28)
+        }
+        .padding(.horizontal, 32)
+    }
 
-                    // Clicking Edit Websites… leaves no trace, so step 3 ticks along
-                    // with step 4.
-                    SetupStep(number: 3, isDone: allowsSearchEngine) {
-                        StepText("Click *Edit Websites…*") {
-                            SafariSnippet {
-                                ReplicaButton { Text("Edit Websites…") }
-                                    .controlSize(.small)
-                            }
-                        }
-                    }
+    #if os(macOS)
+    private static let iconSize: CGFloat = 112
+    #else
+    /// The Mac icon has a transparent margin around its artwork; this one doesn't.
+    private static let iconSize: CGFloat = 92
+    #endif
 
-                    SetupStep(number: 4, isDone: allowsSearchEngine) {
-                        StepText("Choose *Allow* for your search engine") {
-                            SafariSnippet {
-                                HStack(spacing: 6) {
-                                    // Safari shows the site's favicon once it has one, inset
-                                    // on a white disc.
-                                    Image(.googleLogo)
-                                        .resizable()
-                                        .frame(width: 11, height: 11)
-                                        .frame(width: 16, height: 16)
-                                        .background(.white, in: .circle)
-                                    Text("google.com")
-                                    Spacer()
-                                    ReplicaButton {
-                                        HStack(spacing: 18) {
-                                            Text("Allow")
-                                            Image(systemName: "chevron.up.chevron.down")
-                                                .font(.system(size: 9, weight: .bold))
-                                        }
-                                    }
-                                }
+    /// Mirrors Safari Settings on the Mac, and the extension's page in the
+    /// Settings app on iOS, where the steps happen.
+    @ViewBuilder
+    private var setupSteps: some View {
+        SetupStep(number: 1, isDone: openedSettings || status.isEnabled == true) {
+            Button(action: openSettings) {
+                Group {
+                    #if os(macOS)
+                    Label("Open Safari Settings › *Extensions*", systemImage: "safari")
+                    #else
+                    // Opens straight to the extension's page.
+                    Label("Open *Let It Go* in Settings", systemImage: "gear")
+                    #endif
+                }
+                .font(.headline)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+            }
+            .glassButtonStyle()
+            .controlSize(.extraLarge)
+        }
+
+        #if os(macOS)
+        SetupStep(number: 2, isDone: status.isEnabled == true) {
+            StepText("Select the checkbox next to *Let It Go*") {
+                SafariSnippet {
+                    // Measured on Safari's list: a 16 pt checkbox, 6 pt gap, icon
+                    // artwork 28 pt wide (the image has transparent margins, so
+                    // its frame is 34 pt), then 13 pt text 7 pt further.
+                    HStack(spacing: 3) {
+                        ReplicaCheckbox()
+                        AppIcon()
+                            .frame(width: 34, height: 34)
+                            .padding(.vertical, -3)
+                        Text("Let It Go")
+                    }
+                }
+            }
+        }
+
+        // Clicking Edit Websites… leaves no trace, so step 3 ticks along
+        // with step 4.
+        SetupStep(number: 3, isDone: allowsSearchEngine) {
+            StepText("Click *Edit Websites…*") {
+                SafariSnippet {
+                    ReplicaButton { Text("Edit Websites…") }
+                        .controlSize(.small)
+                }
+            }
+        }
+
+        SetupStep(number: 4, isDone: allowsSearchEngine) {
+            StepText("Choose *Allow* for your search engine") {
+                SafariSnippet {
+                    HStack(spacing: 6) {
+                        // Safari shows the site's favicon once it has one, inset
+                        // on a white disc.
+                        Image(.googleLogo)
+                            .resizable()
+                            .frame(width: 11, height: 11)
+                            .frame(width: 16, height: 16)
+                            .background(.white, in: .circle)
+                        Text("google.com")
+                        Spacer()
+                        ReplicaButton {
+                            HStack(spacing: 18) {
+                                Text("Allow")
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(size: 9, weight: .bold))
                             }
                         }
                     }
                 }
             }
-            .frame(width: 320, alignment: .leading)
-
-            Spacer(minLength: 28)
         }
-        .padding(.horizontal, 32)
-        .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            ZStack {
-                AuroraBackground()
-                Snowfall()
+        #else
+        SetupStep(number: 2, isDone: status.isEnabled == true) {
+            StepText("Turn on *Allow Extension*") {
+                SafariSnippet {
+                    HStack {
+                        Text("Allow Extension")
+                        Spacer()
+                        ReplicaSwitch()
+                    }
+                }
             }
-            .ignoresSafeArea()
         }
-        // Dragging anywhere that isn't a control moves the window, and clicking
-        // ends an edit of the redirect target.
-        .contentShape(.rect)
-        .gesture(WindowDragGesture())
-        .onTapGesture { NSApp.keyWindow?.makeFirstResponder(nil) }
-        .environment(\.colorScheme, .dark)
-        .animation(.smooth, value: status.isEnabled)
-        .animation(.smooth, value: openedSettings)
-        .animation(.smooth, value: allowsSearchEngine)
+
+        // Opening a website's permission leaves no trace, so step 3 ticks along
+        // with step 4.
+        SetupStep(number: 3, isDone: allowsSearchEngine) {
+            StepText("Tap your search engine") {
+                SafariSnippet {
+                    HStack(spacing: 8) {
+                        // Settings shows the site's favicon once it has one, inset on
+                        // a white disc.
+                        Image(.googleLogo)
+                            .resizable()
+                            .frame(width: 13, height: 13)
+                            .frame(width: 20, height: 20)
+                            .background(.white, in: .circle)
+                        Text("google.com")
+                        Spacer()
+                        Text("Ask")
+                            .foregroundStyle(.secondary)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+            }
+        }
+
+        SetupStep(number: 4, isDone: allowsSearchEngine) {
+            StepText("Choose *Allow*") {
+                SafariSnippet {
+                    HStack {
+                        Text("Allow")
+                        Spacer()
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(.tint)
+                    }
+                }
+            }
+        }
+        #endif
     }
 
     /// Only trusted while the extension is on, since it can't report changes
@@ -151,9 +257,9 @@ struct ContentView: View {
     }
 }
 
-/// The redirect target. Return or clicking away saves it, Escape puts the old
-/// value back. A save is confirmed with a checkmark; an invalid value shakes the
-/// field and shows a red cross until it's edited.
+/// The redirect target. Return or clicking away saves it, Escape (on the Mac)
+/// puts the old value back. A save is confirmed with a checkmark; an invalid
+/// value shakes the field and shows a red cross until it's edited.
 private struct RedirectTargetField: View {
     @Binding var value: String
 
@@ -164,10 +270,9 @@ private struct RedirectTargetField: View {
     @State private var saveCount = 0
     @State private var shakeCount = 0
     @FocusState private var isFocused: Bool
-    @State private var appearance = SystemAppearance()
+    @Environment(\.systemIsDark) private var isDark
 
     var body: some View {
-        let isDark = appearance.isDark
         // Drawn by hand so it can follow the system appearance in this always-dark
         // window, like the Safari replicas below.
         TextField("http://go", text: $draft)
@@ -175,8 +280,14 @@ private struct RedirectTargetField: View {
             .foregroundStyle(isDark ? .white : .black)
             // Otherwise the selection and cursor are drawn for the dark window.
             .environment(\.colorScheme, isDark ? .dark : .light)
+            #if os(iOS)
+            .keyboardType(.URL)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .submitLabel(.done)
+            #endif
             .padding(.horizontal, 8)
-            .frame(height: 30)
+            .frame(height: Self.height)
             .background(isDark ? Color(hex: 0x1E1E22) : .white, in: .rect(cornerRadius: 8))
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
@@ -196,10 +307,12 @@ private struct RedirectTargetField: View {
                 commit()
                 return .handled
             }
+            #if os(macOS)
             .onExitCommand {
                 draft = value
                 isFocused = false
             }
+            #endif
             .overlay(alignment: .trailing) {
                 Group {
                     switch feedback {
@@ -216,7 +329,8 @@ private struct RedirectTargetField: View {
                 .transition(.scale.combined(with: .opacity))
                 .allowsHitTesting(false)
             }
-            .frame(width: 200)
+            // Narrower on small iPhones.
+            .frame(minWidth: 140, maxWidth: 200)
             .keyframeAnimator(initialValue: 0, trigger: shakeCount) { view, x in
                 view.offset(x: x)
             } keyframes: { _ in
@@ -249,6 +363,13 @@ private struct RedirectTargetField: View {
             }
             .animation(.smooth(duration: 0.2), value: feedback)
     }
+
+    #if os(macOS)
+    private static let height: CGFloat = 30
+    #else
+    /// Easier to tap.
+    private static let height: CGFloat = 36
+    #endif
 
     private func commit() {
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -341,31 +462,40 @@ private struct StepText<Snippet: View>: View {
     }
 }
 
-/// A cut-out of Safari Settings showing a control in the state it should end up
-/// in. It follows the system appearance like Safari does, even though this
-/// window is always dark. Clicking it blurs the replica for a moment behind a
-/// reminder that the real control is in Safari.
+/// A cut-out of Safari Settings (the Settings app on iOS) showing a control in
+/// the state it should end up in. It follows the system appearance like Safari
+/// does, even though this window is always dark. Clicking it blurs the replica
+/// for a moment behind a reminder that the real control is elsewhere.
 private struct SafariSnippet<Content: View>: View {
     @ViewBuilder var content: Content
 
-    @State private var appearance = SystemAppearance()
+    @Environment(\.systemIsDark) private var isDark
     @State private var showsHint = false
     @State private var hintCount = 0
 
+    #if os(macOS)
+    private static var fontSize: CGFloat { 13 }
+    private static var minHeight: CGFloat { 40 }
+    private static var hint: LocalizedStringKey { "This is just a preview, do this in Safari" }
+    #else
+    private static var fontSize: CGFloat { 15 }
+    private static var minHeight: CGFloat { 44 }
+    private static var hint: LocalizedStringKey { "This is just a preview, do this in Settings" }
+    #endif
+
     var body: some View {
-        let isDark = appearance.isDark
         content
-            .font(.system(size: 13))
+            .font(.system(size: Self.fontSize))
             .foregroundStyle(isDark ? .white.opacity(0.9) : .black.opacity(0.85))
             .environment(\.colorScheme, isDark ? .dark : .light)
             .blur(radius: showsHint ? 6 : 0)
             .opacity(showsHint ? 0.35 : 1)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: Self.minHeight, alignment: .leading)
             .overlay {
                 if showsHint {
-                    Text("This is just a preview, do this in Safari")
+                    Text(Self.hint)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(isDark ? .white : .black.opacity(0.85))
                         .lineLimit(1)
@@ -432,6 +562,50 @@ private struct ReplicaButton<Label: View>: View {
     }
 }
 
+// Lookalikes of UIKit controls, for the same reason.
+
+/// The iOS 26 switch, turned on.
+private struct ReplicaSwitch: View {
+    var body: some View {
+        Capsule()
+            .fill(.green)
+            .frame(width: 48, height: 28)
+            .overlay(alignment: .trailing) {
+                Capsule()
+                    .fill(.white)
+                    .frame(width: 30, height: 24)
+                    .padding(2)
+            }
+    }
+}
+
+/// Whether the system, rather than this always-dark window, is in dark mode.
+nonisolated private struct SystemIsDarkKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+private extension EnvironmentValues {
+    var systemIsDark: Bool {
+        get { self[SystemIsDarkKey.self] }
+        set { self[SystemIsDarkKey.self] = newValue }
+    }
+}
+
+/// The app's icon, as the system draws it.
+private struct AppIcon: View {
+    var body: some View {
+        #if os(macOS)
+        Image(nsImage: NSApp.applicationIconImage)
+            .resizable()
+        #else
+        // UIKit has no way to get at the app's own icon.
+        Image(.appIconImage)
+            .resizable()
+        #endif
+    }
+}
+
+#if os(macOS)
 /// Tracks whether the system is in light or dark mode.
 @Observable
 private final class SystemAppearance {
@@ -446,6 +620,7 @@ private final class SystemAppearance {
         }
     }
 }
+#endif
 
 // MARK: - Background
 
@@ -512,8 +687,8 @@ private struct Snowfall: View {
 
 // MARK: - Glass
 
-/// Groups glass shapes so they blend together on macOS 26 and later; earlier
-/// systems have no glass and just show the content.
+/// Groups glass shapes so they blend together on macOS 26 and later (iOS always
+/// has glass); earlier systems have no glass and just show the content.
 private struct GlassContainer<Content: View>: View {
     var spacing: CGFloat
     @ViewBuilder var content: Content

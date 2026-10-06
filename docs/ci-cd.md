@@ -4,7 +4,7 @@ All automation lives in `.github/workflows`.
 
 | Workflow | Runs on | What it does |
 | --- | --- | --- |
-| `ci.yml` | pull requests, pushes to `main`, manual dispatch | `just lint` (the extension's JSON, JavaScript and rule regexes) and a Debug build of the app and extension. On `main` and manual runs, a `release` job then archives a signed, notarized Release build of `Let It Go.app` and publishes it as a GitHub release, but only after lint and build pass. |
+| `ci.yml` | pull requests, pushes to `main`, manual dispatch | `just lint` (the extension's JSON, JavaScript and rule regexes) and Debug builds of the Mac and iOS apps with their extensions (iOS for the simulator, unsigned). On `main` and manual runs, a `release` job then archives a signed, notarized Release build of `Let It Go.app` and publishes it as a GitHub release, but only after lint and build pass. |
 | `workflow-lint.yml` | pull requests, pushes to `main` | Runs [actionlint](https://github.com/rhysd/actionlint) and [zizmor](https://docs.zizmor.sh) against the workflows themselves. |
 
 The macOS jobs run on the `xcode-27` image, which is still a GitHub preview: the project is saved in the Xcode 27 format and does not open in Xcode 26. Move to `macos-27` once that image is generally available, and drop the label from `.github/actionlint.yaml`.
@@ -12,6 +12,8 @@ The macOS jobs run on the `xcode-27` image, which is still a GitHub preview: the
 Dependabot (`.github/dependabot.yml`) keeps the SHA-pinned actions current with a weekly grouped PR.
 
 ## Releases
+
+Releases are Mac only. The iOS app can only be installed through Xcode, TestFlight or the App Store, so it isn't published here.
 
 Every push to `main` produces one release:
 
@@ -43,4 +45,5 @@ If you prefer to add them by hand:
 ```sh
 just lint
 just build
+just build-ios
 ```
