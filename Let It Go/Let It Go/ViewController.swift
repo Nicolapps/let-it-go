@@ -92,7 +92,7 @@ class ViewController: NSViewController {
         // Asked while Safari isn't running, Safari 18 launches but never brings
         // up its Settings. Launch it first and ask once it's done launching.
         if let safari = NSRunningApplication.runningApplications(withBundleIdentifier: safariBundleIdentifier).first {
-            whenFinishedLaunching(safari) { self.showExtensionInSafariSettings(attemptsLeft: 10) }
+            showExtensionInSafariSettings(onceLaunched: safari)
             return
         }
         guard let safariURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: safariBundleIdentifier) else { return }
@@ -102,7 +102,7 @@ class ViewController: NSViewController {
                     NSLog("Couldn't launch Safari: %@", error?.localizedDescription ?? "unknown error")
                     return
                 }
-                self.whenFinishedLaunching(safari) { self.showExtensionInSafariSettings(attemptsLeft: 10) }
+                self.showExtensionInSafariSettings(onceLaunched: safari)
             }
         }
     }
@@ -110,19 +110,23 @@ class ViewController: NSViewController {
     private let safariBundleIdentifier = "com.apple.Safari"
     private var launchObservation: NSKeyValueObservation?
 
-    private func whenFinishedLaunching(_ app: NSRunningApplication, _ body: @escaping () -> Void) {
-        launchObservation = app.observe(\.isFinishedLaunching, options: [.initial]) { [weak self] app, _ in
+    private func showExtensionInSafariSettings(onceLaunched app: NSRunningApplication) {
+        // KVO calls this on whichever thread Safari's launch is reported on.
+        // The app target defaults to main actor isolation, so without
+        // `@Sendable` this closure would be main actor code and crash there.
+        launchObservation = app.observe(\.isFinishedLaunching, options: [.initial]) { @Sendable [weak self] app, _ in
             guard app.isFinishedLaunching else { return }
             DispatchQueue.main.async {
                 guard let self, self.launchObservation != nil else { return }
                 self.launchObservation = nil
-                body()
+                self.showExtensionInSafariSettings(attemptsLeft: 10)
             }
         }
     }
 
     private func showExtensionInSafariSettings(attemptsLeft: Int) {
-        SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { error in
+        SFSafariApplication.showPreferencesForExtension(withIdentifier: extensionBundleIdentifier) { @Sendable error in
+            // Called off the main thread, so not main actor code either.
             guard let error else { return }
             // Safari can refuse while it's still loading its extensions, so give
             // it a few more tries. If it never comes around, at least Safari is up
