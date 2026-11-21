@@ -1,6 +1,6 @@
 name: CI
 
-# Pull requests: lint the extension and build the app.
+# Pull requests: lint the extension and build the Mac and iOS apps.
 # Pushes to main (and manual runs): the same, then publish a signed, notarized Release build of
 # Let It Go.app as a GitHub release once both are green.
 #
@@ -28,6 +28,7 @@ defaults:
 env:
   XCODE_PROJECT: Let It Go/Let It Go.xcodeproj
   SCHEME: Let It Go
+  IOS_SCHEME: Let It Go (iOS)
   DERIVED_DATA: build/DerivedData
 
 jobs:
@@ -76,14 +77,25 @@ jobs:
           xcodebuild -version
           swift --version
 
-      # There are no tests, so this only checks that the app and extension compile.
-      - name: Build
+      # There are no tests, so these only check that the apps and extensions compile.
+      - name: Build (macOS)
         run: |
           xcodebuild build \
             -project "$XCODE_PROJECT" \
             -scheme "$SCHEME" \
             -configuration Debug \
             -destination 'platform=macOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+      - name: Build (iOS)
+        run: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$IOS_SCHEME" \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath "$DERIVED_DATA" \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify --renderer github-actions

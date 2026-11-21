@@ -55,13 +55,14 @@ async function reportAllowedOrigins() {
 
 browser.runtime.onInstalled.addListener(syncRules);
 browser.runtime.onStartup.addListener(syncRules);
-// Coming back to Safari after changing the target in the app.
-browser.windows.onFocusChanged.addListener(syncRules);
+// Coming back to Safari after changing the target in the app. Safari on iOS
+// may not have windows events, and fallback.js keeps the rules fresh anyway.
+browser.windows?.onFocusChanged?.addListener(syncRules);
 
 reportAllowedOrigins();
 browser.permissions.onAdded.addListener(reportAllowedOrigins);
 browser.permissions.onRemoved.addListener(reportAllowedOrigins);
-browser.windows.onFocusChanged.addListener(reportAllowedOrigins);
+browser.windows?.onFocusChanged?.addListener(reportAllowedOrigins);
 
 // fallback.js asks for the target before redirecting, which also keeps the
 // rules fresh on every search.

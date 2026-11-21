@@ -1,5 +1,6 @@
 project := "Let It Go/Let It Go.xcodeproj"
 scheme := "Let It Go"
+ios_scheme := "Let It Go (iOS)"
 derived := "build"
 # The build number is the commit count, which only goes up, as App Store Connect requires.
 # `git rev-list --reverse HEAD | sed -n <n>p` turns a build number back into its commit.
@@ -14,6 +15,12 @@ default:
 build config="Debug":
     xcodebuild -project "{{project}}" -scheme "{{scheme}}" -configuration {{config}} \
         -derivedDataPath {{derived}} -quiet \
+        CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} build
+
+# Build the iOS app and extension for the simulator (config: Debug or Release)
+build-ios config="Debug":
+    xcodebuild -project "{{project}}" -scheme "{{ios_scheme}}" -configuration {{config}} \
+        -destination "generic/platform=iOS Simulator" -derivedDataPath {{derived}} -quiet \
         CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} build
 
 # Build, then launch the app so Safari picks up the extension

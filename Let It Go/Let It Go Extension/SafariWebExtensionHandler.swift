@@ -8,9 +8,6 @@
 import SafariServices
 import os.log
 
-/// Shared with the app, which stores the redirect target here.
-let appGroup = "W47E2LS5Y9.dev.ettlin.nicolas.letitgo"
-
 class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
     func beginRequest(with context: NSExtensionContext) {
