@@ -2,6 +2,10 @@ project := "Let It Go/Let It Go.xcodeproj"
 scheme := "Let It Go"
 ios_scheme := "Let It Go (iOS)"
 derived := "build"
+# The build number is the commit count, which only goes up, as App Store Connect requires.
+# `git rev-list --reverse HEAD | sed -n <n>p` turns a build number back into its commit.
+build_number := `git rev-list --count HEAD`
+commit := `git rev-parse --short HEAD`
 
 # List available recipes
 default:
@@ -10,7 +14,8 @@ default:
 # Build the app and extension (config: Debug or Release)
 build config="Debug":
     xcodebuild -project "{{project}}" -scheme "{{scheme}}" -configuration {{config}} \
-        -derivedDataPath {{derived}} -quiet build
+        -derivedDataPath {{derived}} -quiet \
+        CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} build
 
 # Build the iOS app and extension for the simulator (config: Debug or Release)
 build-ios config="Debug":
@@ -58,6 +63,19 @@ try url:
       }
     }
     console.log("no rule matched (fallback.js may still handle it)");
+
+# Archive a Release build of the current commit and upload it to App Store Connect
+upload:
+    @git diff --quiet HEAD || { echo "Commit your changes first: the build number is the commit count"; exit 1; }
+    rm -rf {{derived}}/LetItGo.xcarchive {{derived}}/export
+    xcodebuild -project "{{project}}" -scheme "{{scheme}}" -configuration Release \
+        -destination "generic/platform=macOS" -derivedDataPath {{derived}} \
+        -archivePath {{derived}}/LetItGo.xcarchive -allowProvisioningUpdates -quiet \
+        CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} archive
+    xcodebuild -exportArchive -archivePath {{derived}}/LetItGo.xcarchive \
+        -exportOptionsPlist scripts/ExportOptions.plist -exportPath {{derived}}/export \
+        -allowProvisioningUpdates
+    @echo "Uploaded build {{build_number}} ({{commit}})"
 
 # Upload the code-signing and notarization secrets so CI publishes signed releases
 setup-signing:
