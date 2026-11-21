@@ -20,7 +20,8 @@ build config="Debug":
 # Build the iOS app and extension for the simulator (config: Debug or Release)
 build-ios config="Debug":
     xcodebuild -project "{{project}}" -scheme "{{ios_scheme}}" -configuration {{config}} \
-        -destination "generic/platform=iOS Simulator" -derivedDataPath {{derived}} -quiet build
+        -destination "generic/platform=iOS Simulator" -derivedDataPath {{derived}} -quiet \
+        CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} build
 
 # Build, then launch the app so Safari picks up the extension
 run config="Debug": (build config) quit
