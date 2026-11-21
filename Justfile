@@ -63,6 +63,10 @@ try url:
 setup-signing:
     scripts/setup-signing-secrets.sh
 
+# Upload the App Store Connect API key so CI uploads the iOS app to TestFlight
+setup-testflight:
+    scripts/setup-testflight-secrets.sh
+
 # Remove build output
 clean:
     rm -rf {{derived}}
