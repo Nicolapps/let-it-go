@@ -32,7 +32,7 @@
 		37B6563330732FF500B9164F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561230732FF500B9164F /* AppDelegate.swift */; };
 		37B6563430732FF500B9164F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B6561330732FF500B9164F /* ViewController.swift */; };
 		37B6563530732FF500B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B655D730732FF400B9164F /* Assets.xcassets */; };
-		37B6563630732FF500B9164F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B6561430732FF500B9164F /* Assets.xcassets */; };
+		37B6563630732FF500B9164F /* iOS Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37B6561430732FF500B9164F /* iOS Assets.xcassets */; };
 		37B6563730732FF500B9164F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 37B655F930732FF500B9164F /* AppIcon.icon */; };
 		37B6563830732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 37B6560230732FF500B9164F /* PrivacyInfo.xcprivacy */; };
 		37B6563930732FF500B9164F /* Let It Go Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37B6561930732FF500B9164F /* Let It Go Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -111,7 +111,7 @@
 		37B6561130732FF500B9164F /* ExtensionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionStatus.swift; sourceTree = "<group>"; };
 		37B6561230732FF500B9164F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		37B6561330732FF500B9164F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		37B6561430732FF500B9164F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37B6561430732FF500B9164F /* iOS Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "iOS Assets.xcassets"; sourceTree = "<group>"; };
 		37B6561530732FF500B9164F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37B6561630732FF500B9164F /* Let It Go.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go.entitlements"; sourceTree = "<group>"; };
 		37B6561730732FF500B9164F /* Let It Go Extension (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let It Go Extension (iOS).entitlements"; sourceTree = "<group>"; };
@@ -222,7 +222,7 @@
 			children = (
 				37B6561230732FF500B9164F /* AppDelegate.swift */,
 				37B6561330732FF500B9164F /* ViewController.swift */,
-				37B6561430732FF500B9164F /* Assets.xcassets */,
+				37B6561430732FF500B9164F /* iOS Assets.xcassets */,
 				37B6561530732FF500B9164F /* Info.plist */,
 				37B6561630732FF500B9164F /* Let It Go.entitlements */,
 			);
@@ -372,7 +372,7 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				37B6563530732FF500B9164F /* Assets.xcassets in Resources */,
-				37B6563630732FF500B9164F /* Assets.xcassets in Resources */,
+				37B6563630732FF500B9164F /* iOS Assets.xcassets in Resources */,
 				37B6563730732FF500B9164F /* AppIcon.icon in Resources */,
 				37B6563830732FF500B9164F /* PrivacyInfo.xcprivacy in Resources */,
 			);

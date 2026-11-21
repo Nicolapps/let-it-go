@@ -598,8 +598,9 @@ private struct AppIcon: View {
         Image(nsImage: NSApp.applicationIconImage)
             .resizable()
         #else
-        // UIKit has no way to get at the app's own icon.
-        Image(.appIconImage)
+        // UIKit has no way to get at the app's own icon, so this is a copy in the
+        // iOS asset catalog, looked up by name in case it gets no asset symbol.
+        Image("IconArtwork")
             .resizable()
         #endif
     }
