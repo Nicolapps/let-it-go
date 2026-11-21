@@ -83,6 +83,9 @@ class ViewController: NSViewController {
 
     private let safariBundleIdentifier = "com.apple.Safari"
     private var launchObservation: NSKeyValueObservation?
+    // KVO doesn't retain what it observes, and an NSRunningApplication that's
+    // freed while still observed crashes. Hold it until the observation ends.
+    private var launchingApp: NSRunningApplication?
 
     private func showExtensionInSafariSettings(onceLaunched app: NSRunningApplication) {
         // KVO calls this on whichever thread Safari's launch is reported on.
@@ -91,11 +94,14 @@ class ViewController: NSViewController {
         launchObservation = app.observe(\.isFinishedLaunching, options: [.initial]) { @Sendable [weak self] app, _ in
             guard app.isFinishedLaunching else { return }
             DispatchQueue.main.async {
-                guard let self, self.launchObservation != nil else { return }
+                guard let self, let observation = self.launchObservation else { return }
+                observation.invalidate()
                 self.launchObservation = nil
+                self.launchingApp = nil
                 self.showExtensionInSafariSettings(attemptsLeft: 10)
             }
         }
+        launchingApp = app
     }
 
     private func showExtensionInSafariSettings(attemptsLeft: Int) {

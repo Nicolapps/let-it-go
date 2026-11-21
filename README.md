@@ -46,4 +46,5 @@ just build-ios    # build the iOS app for the simulator
 just lint         # validate the extension's JSON, JavaScript and rule regexes
 just try <url>    # show where a search URL would be redirected
 just rules        # regenerate extension/rules.json
+just upload       # archive a Release build and upload it to App Store Connect
 ```
