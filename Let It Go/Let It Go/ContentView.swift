@@ -102,7 +102,12 @@ struct ContentView: View {
                     setupSteps
                 }
             }
+            #if os(macOS)
+            .frame(width: 320, alignment: .leading)
+            #else
+            // Narrower on small iPhones.
             .frame(maxWidth: 320, alignment: .leading)
+            #endif
 
             Spacer(minLength: 28)
         }
@@ -329,8 +334,12 @@ private struct RedirectTargetField: View {
                 .transition(.scale.combined(with: .opacity))
                 .allowsHitTesting(false)
             }
+            #if os(macOS)
+            .frame(width: 200)
+            #else
             // Narrower on small iPhones.
             .frame(minWidth: 140, maxWidth: 200)
+            #endif
             .keyframeAnimator(initialValue: 0, trigger: shakeCount) { view, x in
                 view.offset(x: x)
             } keyframes: { _ in
