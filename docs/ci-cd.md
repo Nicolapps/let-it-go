@@ -28,7 +28,8 @@ Re-running a workflow reuses the same tag and replaces the asset instead of fail
 
 The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App Store Connect. Once Apple has processed it, usually within a few minutes to an hour, it is available to the app's internal testers in TestFlight. Testing with external testers, and submitting to the App Store, stay manual steps in App Store Connect.
 
-- Build number: `<run number>.<run attempt>`, for example `42.1`. App Store Connect rejects a build number it has already seen, so a re-run uploads as `42.2` rather than failing. The version is the same `MARKETING_VERSION` as the Mac app.
+- Version and build number: the same as the Mac release, `MARKETING_VERSION` and the commit count, with the short hash in the Info.plist as `GitCommit`. App Store Connect refuses a build number it has already seen, so re-running the job for a commit it has already uploaded fails at the upload; there's nothing to redo in that case.
+- Export: `scripts/ExportOptions.plist`, the same file `just upload` and `just upload-ios` use.
 - Signing: automatic, with the App Store Connect API key below. Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, including the `group.dev.ettlin.nicolas.letitgo` app group, so no certificate or profile is kept in the secrets.
 - Export compliance: the app declares `ITSAppUsesNonExemptEncryption = NO`, so builds don't wait on the encryption question.
 
@@ -37,6 +38,8 @@ The job fails if any of its secrets is missing. Before the first upload:
 1. In App Store Connect, add iOS to the Let It Go app (bundle ID `dev.ettlin.nicolas.letitgo`), or create the app if it doesn't exist yet. The Mac and iOS apps share their bundle IDs, so they are one app with two platforms.
 2. Create an API key with the Admin role under *Users and Access › Integrations › App Store Connect API › Team Keys*, and download its `.p8` file.
 3. Run `just setup-testflight` on your Mac. It checks the key against Apple and uploads the secrets with the GitHub CLI.
+
+To upload a build from your Mac instead, with your own Xcode account, run `just upload-ios`.
 
 | Secret | Value |
 | --- | --- |

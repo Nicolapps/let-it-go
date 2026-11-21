@@ -78,6 +78,19 @@ upload:
         -allowProvisioningUpdates
     @echo "Uploaded build {{build_number}} ({{commit}})"
 
+# Archive a Release build of the iOS app at the current commit and upload it to App Store Connect
+upload-ios:
+    @git diff --quiet HEAD || { echo "Commit your changes first: the build number is the commit count"; exit 1; }
+    rm -rf {{derived}}/LetItGo-iOS.xcarchive {{derived}}/export-ios
+    xcodebuild -project "{{project}}" -scheme "{{ios_scheme}}" -configuration Release \
+        -destination "generic/platform=iOS" -derivedDataPath {{derived}} \
+        -archivePath {{derived}}/LetItGo-iOS.xcarchive -allowProvisioningUpdates -quiet \
+        CURRENT_PROJECT_VERSION={{build_number}} GIT_COMMIT={{commit}} archive
+    xcodebuild -exportArchive -archivePath {{derived}}/LetItGo-iOS.xcarchive \
+        -exportOptionsPlist scripts/ExportOptions.plist -exportPath {{derived}}/export-ios \
+        -allowProvisioningUpdates
+    @echo "Uploaded iOS build {{build_number}} ({{commit}})"
+
 # Upload the code-signing and notarization secrets so CI publishes signed releases
 setup-signing:
     scripts/setup-signing-secrets.sh

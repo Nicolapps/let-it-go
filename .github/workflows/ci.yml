@@ -318,11 +318,23 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # the build number is the commit count
 
       - name: Show toolchain
         run: |
           xcodebuild -version
           swift --version
+
+      # Same scheme as the Mac release and `just upload-ios`. App Store Connect refuses a build
+      # number it has already seen, so re-running this job for a commit it has already uploaded
+      # fails at the upload.
+      - name: Determine version
+        id: version
+        run: |
+          {
+            echo "build_number=$(git rev-list --count HEAD)"
+            echo "commit=$(git rev-parse --short HEAD)"
+          } | tee -a "$GITHUB_OUTPUT"
 
       # Outside the checkout, and removed at the end of the job.
       - name: Write API key
@@ -337,11 +349,10 @@ jobs:
       # Automatic signing with the API key: Xcode uses the team's cloud-managed distribution
       # certificate and creates or updates the App Store provisioning profiles (with the app
       # group) itself, so no certificate or profile is stored in the repository's secrets.
-      # The build number is run.attempt, since App Store Connect rejects a build number it has
-      # already seen, which a re-run would otherwise reuse.
       - name: Archive
         env:
-          BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_attempt }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
@@ -358,43 +369,22 @@ jobs:
             -authenticationKeyID "$API_KEY_ID" \
             -authenticationKeyIssuerID "$API_ISSUER_ID" \
             "CURRENT_PROJECT_VERSION=$BUILD_NUMBER" \
+            "GIT_COMMIT=$COMMIT" \
             "DEVELOPMENT_TEAM=$APPLE_TEAM_ID" \
             | xcbeautify --renderer github-actions
 
-      # destination=upload sends the build straight to App Store Connect. Once Apple has
-      # processed it, it shows up in TestFlight for internal testers; the app declares no
-      # non-exempt encryption, so there is no export compliance question to answer first.
+      # scripts/ExportOptions.plist, shared with `just upload`, has destination=upload, which sends
+      # the build straight to App Store Connect. Once Apple has processed it, it shows up in
+      # TestFlight for internal testers; the app declares no non-exempt encryption, so there is
+      # no export compliance question to answer first.
       - name: Upload to App Store Connect
         env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
-          export_options="$RUNNER_TEMP/ExportOptions.plist"
-          cat > "$export_options" <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store-connect</string>
-            <key>destination</key>
-            <string>upload</string>
-            <key>teamID</key>
-            <string>${APPLE_TEAM_ID}</string>
-            <key>signingStyle</key>
-            <string>automatic</string>
-            <key>manageAppVersionAndBuildNumber</key>
-            <false/>
-            <key>uploadSymbols</key>
-            <true/>
-          </dict>
-          </plist>
-          EOF
-
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
-            -exportOptionsPlist "$export_options" \
+            -exportOptionsPlist scripts/ExportOptions.plist \
             -exportPath "$EXPORT_PATH" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$API_KEY_PATH" \
@@ -404,10 +394,11 @@ jobs:
 
       - name: Summarize
         env:
-          BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_attempt }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
         run: |
           marketing_version=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$ARCHIVE_PATH/Info.plist")
-          echo "Uploaded Let It Go for iOS ${marketing_version} (${BUILD_NUMBER}) to App Store Connect. It appears in TestFlight once Apple has processed it." >> "$GITHUB_STEP_SUMMARY"
+          echo "Uploaded Let It Go for iOS ${marketing_version} (build ${BUILD_NUMBER}, ${COMMIT}) to App Store Connect. It appears in TestFlight once Apple has processed it." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Remove API key
         if: always()
