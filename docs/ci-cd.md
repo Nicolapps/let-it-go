@@ -26,7 +26,14 @@ Re-running a workflow reuses the same tag and replaces the asset instead of fail
 
 The release job always signs with Developer ID and notarizes, and fails if any of the secrets below is missing. There is no ad-hoc fallback: the app group ID in the Swift sources is hardcoded to the team, and Safari only loads unsigned extensions while *Allow unsigned extensions* is on in its developer settings. The app group entitlement uses `$(TeamIdentifierPrefix)`, so no provisioning profile is needed.
 
-To set the secrets, run `just setup-signing` on your Mac once. It finds your *Developer ID Application* certificate, walks you through exporting it, checks your notarization credentials against Apple, and uploads the five secrets with the GitHub CLI.
+To set the secrets, run `just setup-signing` on your Mac once. It finds your *Developer ID Application* certificate (or explains how to create one, with Xcode or in the browser), walks you through exporting it with its private key, checks the `.p12` and your notarization credentials, and uploads the five secrets with the GitHub CLI. Nothing is uploaded until every check passes.
+
+You need:
+
+- A paid [Apple Developer Program](https://developer.apple.com/programs/enroll/) membership where you are the Account Holder, because only the Account Holder can create Developer ID certificates.
+- A [Developer ID Application certificate](https://developer.apple.com/help/account/certificates/create-developer-id-certificates/) with its private key in your login keychain. The easiest way to create one is Xcode → Settings → Accounts → your team → Manage Certificates → + → Developer ID Application.
+- An [app-specific password](https://support.apple.com/en-us/102654) for your Apple ID, created at [account.apple.com](https://account.apple.com) → Sign-In and Security → App-Specific Passwords.
+- The [GitHub CLI](https://cli.github.com), logged in: `brew install gh && gh auth login`.
 
 If you prefer to add them by hand:
 
