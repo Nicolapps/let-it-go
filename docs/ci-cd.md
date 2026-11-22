@@ -33,20 +33,34 @@ The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App
 - Signing: automatic, with the App Store Connect API key below. Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, including the `group.dev.ettlin.nicolas.letitgo` app group, so no certificate or profile is kept in the secrets.
 - Export compliance: the app declares `ITSAppUsesNonExemptEncryption = NO`, so builds don't wait on the encryption question.
 
-The job fails if any of its secrets is missing. Before the first upload:
+### Setting it up
 
-1. In App Store Connect, add iOS to the Let It Go app (bundle ID `dev.ettlin.nicolas.letitgo`), or create the app if it doesn't exist yet. The Mac and iOS apps share their bundle IDs, so they are one app with two platforms.
-2. Create an API key with the Admin role under *Users and Access › Integrations › App Store Connect API › Team Keys*, and download its `.p8` file.
-3. Run `just setup-testflight` on your Mac. It checks the key against Apple and uploads the secrets with the GitHub CLI.
+The job fails if any of its secrets is missing, so do this once before merging the job into `main`. `just setup-testflight` walks you through all of it on your Mac, with links, checks the key against Apple and uploads the secrets with the GitHub CLI. The steps, in short:
 
-To upload a build from your Mac instead, with your own Xcode account, run `just upload-ios`.
+1. **Accept Apple's agreements.** App Store Connect refuses uploads, and the notary service refuses the Mac release, with *A required agreement is missing or has expired* while an updated agreement is waiting. The team's Account Holder accepts it at [developer.apple.com/account](https://developer.apple.com/account) (a banner appears when one is pending) and, if anything is marked pending, under [Agreements, Tax, and Banking](https://appstoreconnect.apple.com/business).
+2. **Add iOS to the app in App Store Connect.** The Mac and iOS apps share the bundle ID `dev.ettlin.nicolas.letitgo`, so they are one app with two platforms. In [Apps](https://appstoreconnect.apple.com/apps), open Let It Go and choose *Add Platform* › iOS in the sidebar. If the app doesn't exist yet, create it with + › *New App*, tick iOS (and macOS), and pick that bundle ID. If the bundle ID isn't offered, build the app once in Xcode with your team selected, which registers it, or [register it by hand](https://developer.apple.com/account/resources/identifiers/add/bundleId). The App Store page doesn't need to be filled in for TestFlight.
+3. **Create an App Store Connect API key.** Under [Users and Access › Integrations › App Store Connect API](https://appstoreconnect.apple.com/access/integrations/api), choose *Team Keys* (the first time, the Account Holder clicks *Request Access*), then + with the **Admin** role. A lower role can upload but can't let Xcode create the distribution certificate and provisioning profiles. Download the `.p8` file right away: Apple only lets you download it once. Note the key ID (10 characters, also in the file name `AuthKey_<KEY ID>.p8`) and the issuer ID (a UUID shown above the list).
+4. **Run `just setup-testflight`.** It reuses `APPLE_TEAM_ID` if `just setup-signing` already set it.
 
 | Secret | Value |
 | --- | --- |
 | `APP_STORE_CONNECT_API_KEY_P8` | The API key's `.p8` file, base64-encoded (`base64 -i AuthKey_XXXXXXXXXX.p8 \| pbcopy`). |
-| `APP_STORE_CONNECT_KEY_ID` | The key's ID. |
-| `APP_STORE_CONNECT_ISSUER_ID` | The issuer ID shown above the list of keys. |
+| `APP_STORE_CONNECT_KEY_ID` | The key's ID, for example `2X9R4HXF34`. |
+| `APP_STORE_CONNECT_ISSUER_ID` | The issuer ID shown above the list of team keys. |
 | `APPLE_TEAM_ID` | Shared with the Mac release (see below). |
+
+To start an upload without pushing, run `gh workflow run CI --ref main`. To upload a build from your Mac instead, with your own Xcode account, run `just upload-ios`.
+
+### Installing a TestFlight build
+
+App Store Connect emails you once a build has been processed. In Let It Go › TestFlight › *Internal Testing*, create a group with + and add yourself and anyone else on the team. Testers install the build with the [TestFlight app](https://apps.apple.com/app/testflight/id899247664), signed in with the same Apple ID. Builds for testers outside the team need Apple's beta review first, under *External Testing*.
+
+### When the upload fails
+
+- *A required agreement is missing or has expired*: an agreement is waiting to be accepted (step 1). Accept it, then re-run the failed job.
+- *No profiles for 'dev.ettlin.nicolas.letitgo' were found* or a certificate error: the API key isn't Admin. Create a new Admin key and run `just setup-testflight` again.
+- *No suitable application records were found*: iOS isn't a platform of the app in App Store Connect yet (step 2).
+- *The bundle version must be higher than the previously uploaded version*: this commit was already uploaded, usually by a re-run. There's nothing to redo.
 
 ## Mac signing and notarization
 
