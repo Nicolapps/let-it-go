@@ -1,11 +1,13 @@
 name: CI
 
 # Pull requests: lint the extension and build the Mac and iOS apps.
-# Pushes to main (and manual runs): the same, then publish a signed, notarized Release build of
-# Let It Go.app as a GitHub release once both are green.
+# Pushes to main (and manual runs): the same, then, once both are green, publish a signed,
+# notarized Release build of the Mac app as a GitHub release, and upload a Release build of the
+# iOS app to App Store Connect for TestFlight.
 #
 # Signing: the release job needs the repository secrets described in docs/ci-cd.md (run
-# `just setup-signing`). Unlike an ordinary app, an ad-hoc signed build is no use here: the app
+# `just setup-signing`), and the TestFlight job an App Store Connect API key (run
+# `just setup-testflight`). Unlike an ordinary app, an ad-hoc signed build is no use here: the app
 # group ID is hardcoded to the team, and Safari only loads unsigned extensions in developer mode.
 
 on:
@@ -282,3 +284,122 @@ jobs:
       - name: Remove signing keychain
         if: always()
         run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
+
+  testflight:
+    name: Upload to TestFlight
+    needs: [lint, build]
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: xcode-27
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      ARCHIVE_PATH: build/LetItGo-iOS.xcarchive
+      EXPORT_PATH: build/LetItGo-iOS
+    steps:
+      - name: Check App Store Connect secrets
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          missing=()
+          [ -n "$APPLE_TEAM_ID" ] || missing+=(APPLE_TEAM_ID)
+          [ -n "$API_KEY_P8_BASE64" ] || missing+=(APP_STORE_CONNECT_API_KEY_P8)
+          [ -n "$API_KEY_ID" ] || missing+=(APP_STORE_CONNECT_KEY_ID)
+          [ -n "$API_ISSUER_ID" ] || missing+=(APP_STORE_CONNECT_ISSUER_ID)
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error title=Missing App Store Connect secrets::${missing[*]} not set. Run \`just setup-testflight\` (see docs/ci-cd.md)."
+            exit 1
+          fi
+
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the build number is the commit count
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      # Same scheme as the Mac release and `just upload-ios`. App Store Connect refuses a build
+      # number it has already seen, so re-running this job for a commit it has already uploaded
+      # fails at the upload.
+      - name: Determine version
+        id: version
+        run: |
+          {
+            echo "build_number=$(git rev-list --count HEAD)"
+            echo "commit=$(git rev-parse --short HEAD)"
+          } | tee -a "$GITHUB_OUTPUT"
+
+      # Outside the checkout, and removed at the end of the job.
+      - name: Write API key
+        env:
+          API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          key_path="$RUNNER_TEMP/AuthKey.p8"
+          echo "$API_KEY_P8_BASE64" | base64 --decode > "$key_path"
+          chmod 600 "$key_path"
+          echo "API_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      # Automatic signing with the API key: Xcode uses the team's cloud-managed distribution
+      # certificate and creates or updates the App Store provisioning profiles (with the app
+      # group) itself, so no certificate or profile is stored in the repository's secrets.
+      - name: Archive
+        env:
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$IOS_SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$API_KEY_ID" \
+            -authenticationKeyIssuerID "$API_ISSUER_ID" \
+            "CURRENT_PROJECT_VERSION=$BUILD_NUMBER" \
+            "GIT_COMMIT=$COMMIT" \
+            "DEVELOPMENT_TEAM=$APPLE_TEAM_ID" \
+            | xcbeautify --renderer github-actions
+
+      # scripts/ExportOptions.plist, shared with `just upload`, has destination=upload, which sends
+      # the build straight to App Store Connect. Once Apple has processed it, it shows up in
+      # TestFlight for internal testers; the app declares no non-exempt encryption, so there is
+      # no export compliance question to answer first.
+      - name: Upload to App Store Connect
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist scripts/ExportOptions.plist \
+            -exportPath "$EXPORT_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$API_KEY_ID" \
+            -authenticationKeyIssuerID "$API_ISSUER_ID" \
+            | xcbeautify --renderer github-actions
+
+      - name: Summarize
+        env:
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
+        run: |
+          marketing_version=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$ARCHIVE_PATH/Info.plist")
+          echo "Uploaded Let It Go for iOS ${marketing_version} (build ${BUILD_NUMBER}, ${COMMIT}) to App Store Connect. It appears in TestFlight once Apple has processed it." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"

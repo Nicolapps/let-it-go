@@ -20,7 +20,7 @@ It works with Google, Bing, DuckDuckGo, Yahoo and Ecosia, on macOS 15 or later a
 
 ### iPhone and iPad
 
-1. Open the project in Xcode, pick the *Let It Go (iOS)* scheme and run it on your device.
+1. Install it from TestFlight, where CI uploads every build of `main` (see `docs/ci-cd.md`), or open the project in Xcode, pick the *Let It Go (iOS)* scheme and run it on your device.
 2. Follow the checklist: *Open Let It Go in Settings* takes you to the extension's page, where you turn on *Allow Extension*, then tap your search engine and choose *Allow*.
 3. Optionally, change the redirect field, as on the Mac.
 
@@ -47,4 +47,5 @@ just lint         # validate the extension's JSON, JavaScript and rule regexes
 just try <url>    # show where a search URL would be redirected
 just rules        # regenerate extension/rules.json
 just upload       # archive a Release build and upload it to App Store Connect
+just upload-ios   # the same for the iOS app
 ```
