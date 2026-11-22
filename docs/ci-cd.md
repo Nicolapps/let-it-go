@@ -30,7 +30,7 @@ The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App
 
 - Version and build number: the same as the Mac release, `MARKETING_VERSION` and the commit count, with the short hash in the Info.plist as `GitCommit`. App Store Connect refuses a build number it has already seen, so re-running the job for a commit it has already uploaded fails at the upload; there's nothing to redo in that case.
 - Export: `scripts/ExportOptions.plist`, the same file `just upload` and `just upload-ios` use.
-- Signing: automatic, with the App Store Connect API key below. Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, including the `group.dev.ettlin.nicolas.letitgo` app group, so no certificate or profile is kept in the secrets.
+- Signing: the archive is built unsigned, because xcodebuild can't use an API key to sign at archive time (Apple refuses it with *Authentication failed*). The job then signs it locally, with no certificate, only to attach the app's and the extension's entitlements, so the `group.dev.ettlin.nicolas.letitgo` App Group survives. The export signs for real with the App Store Connect API key below: Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, so no certificate or profile is kept in the secrets.
 - Export compliance: the app declares `ITSAppUsesNonExemptEncryption = NO`, so builds don't wait on the encryption question.
 
 ### Setting it up
@@ -39,6 +39,8 @@ The job fails if any of its secrets is missing, so do this once before merging t
 
 1. **Accept Apple's agreements.** App Store Connect refuses uploads, and the notary service refuses the Mac release, with *A required agreement is missing or has expired* while an updated agreement is waiting. The team's Account Holder accepts it at [developer.apple.com/account](https://developer.apple.com/account) (a banner appears when one is pending) and, if anything is marked pending, under [Agreements, Tax, and Banking](https://appstoreconnect.apple.com/business).
 2. **Add iOS to the app in App Store Connect.** The Mac and iOS apps share the bundle ID `dev.ettlin.nicolas.letitgo`, so they are one app with two platforms. In [Apps](https://appstoreconnect.apple.com/apps), open Let It Go and choose *Add Platform* › iOS in the sidebar. If the app doesn't exist yet, create it with + › *New App*, tick iOS (and macOS), and pick that bundle ID. If the bundle ID isn't offered, build the app once in Xcode with your team selected, which registers it, or [register it by hand](https://developer.apple.com/account/resources/identifiers/add/bundleId). The App Store page doesn't need to be filled in for TestFlight.
+
+   **Then register the App Group, once:** archive the iOS app on your Mac with your own Xcode account, for example with `just upload-ios`, or with *Product › Archive* in Xcode with the *Let It Go (iOS)* scheme. That enables App Groups on both App IDs and registers `group.dev.ettlin.nicolas.letitgo`, which the API key can't do. Without it, uploads go through but the App Group is missing from the build, so the extension can't read the redirect target set in the app.
 3. **Create an App Store Connect API key.** Under [Users and Access › Integrations › App Store Connect API](https://appstoreconnect.apple.com/access/integrations/api), choose *Team Keys* (the first time, the Account Holder clicks *Request Access*), then + with the **Admin** role. A lower role can upload but can't let Xcode create the distribution certificate and provisioning profiles. Download the `.p8` file right away: Apple only lets you download it once. Note the key ID (10 characters, also in the file name `AuthKey_<KEY ID>.p8`) and the issuer ID (a UUID shown above the list).
 4. **Run `just setup-testflight`.** It reuses `APPLE_TEAM_ID` if `just setup-signing` already set it.
 
@@ -58,7 +60,9 @@ App Store Connect emails you once a build has been processed. In Let It Go › T
 ### When the upload fails
 
 - *A required agreement is missing or has expired*: an agreement is waiting to be accepted (step 1). Accept it, then re-run the failed job.
-- *No profiles for 'dev.ettlin.nicolas.letitgo' were found* or a certificate error: the API key isn't Admin. Create a new Admin key and run `just setup-testflight` again.
+- *Authentication failed: Make sure a bearer token was provided* during the archive, followed by *No profiles for 'dev.ettlin.nicolas.letitgo' were found*: something is signing at archive time with the API key, which Apple refuses. The archive step must keep `CODE_SIGNING_ALLOWED=NO`.
+- A certificate or profile error during the export: the API key isn't Admin. Create a new Admin key and run `just setup-testflight` again.
+- The *Add entitlements* step fails: the archive's paths changed (target or product names). Update the paths in that step.
 - *No suitable application records were found*: iOS isn't a platform of the app in App Store Connect yet (step 2).
 - *The bundle version must be higher than the previously uploaded version*: this commit was already uploaded, usually by a re-run. There's nothing to redo.
 

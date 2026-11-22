@@ -106,9 +106,15 @@ cat <<EOF
 
   You don't need to fill in the App Store page to use TestFlight.
 
+  ${bold}Then register the App Group, once.${reset} CI can't do it with an API key: archive the iOS app
+  on this Mac with your own Xcode account, either with Product › Archive in Xcode (scheme
+  “Let It Go (iOS)”) or with: just upload-ios
+  That enables App Groups on both App IDs and registers group.dev.ettlin.nicolas.letitgo.
+  Without it, the build uploads but the extension can't read the redirect target.
+
 EOF
 if ask "Open App Store Connect now?"; then open "https://appstoreconnect.apple.com/apps" || true; fi
-read -r -p "Press Return once Let It Go has iOS as a platform. " _
+read -r -p "Press Return once Let It Go has iOS as a platform and you've archived it once. " _
 
 # ---------------------------------------------------------------------------------------------
 step "3/5  App Store Connect API key"
