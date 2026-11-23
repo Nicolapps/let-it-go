@@ -43,7 +43,7 @@ The app and extension share the redirect target through an App Group. iOS requir
 - `extension/background.js` copies those rules so they point at the redirect target set in the app.
 - `extension/fallback.js` handles the searches the rules can't match, such as `go/foo?x=1`.
 
-The Chrome extension in `chrome/` is a copy of `extension/`, so that each folder loads on its own. Each copied file starts with a comment pointing at its twin: change both. `just rules` writes both copies of `rules.json`, and the icons are copied as they are. `just lint` checks that both manifests have the same version. Three files differ:
+The Chrome extension in `chrome/` is a copy of `extension/`, so that each folder loads on its own. Each copied file starts with a comment pointing at its twin: change both. `just rules` writes both copies of `rules.json`, and the icons are copied as they are. Three files differ:
 
 - `manifest.json` has no native messaging, which Chrome doesn't need without an app.
 - `background.js` reads the redirect target from `chrome.storage.sync` instead of asking the app.
