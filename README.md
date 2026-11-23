@@ -14,7 +14,7 @@ It works with Google, Bing, DuckDuckGo, Yahoo and Ecosia, on macOS 15 or later a
 
 ### Mac
 
-1. Run `just install` to build the app and copy it into `/Applications`.
+1. Install it from TestFlight, where CI uploads every build of `main` (see `docs/ci-cd.md`), download it from the latest GitHub release, or run `just install` to build the app and copy it into `/Applications`.
 2. Open Let It Go and follow the checklist: enable the extension in Safari Settings, then allow it on your search engine.
 3. Optionally, change where `go/` links point to in the redirect field (`http://go` by default).
 

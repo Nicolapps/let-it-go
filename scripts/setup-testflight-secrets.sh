@@ -65,7 +65,7 @@ gh auth status > /dev/null 2>&1 || fail "GitHub CLI is not logged in. Run: gh au
 repo=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null) \
   || fail "Run this from inside the Let It Go repository checkout."
 
-say "This uploads 3 or 4 secrets to ${bold}$repo${reset} so that CI can upload the iOS app to TestFlight."
+say "This uploads 3 or 4 secrets to ${bold}$repo${reset} so that CI can upload the iOS and Mac apps to TestFlight."
 note "Stop at any time with Ctrl-C: nothing is uploaded before step 5."
 
 # ---------------------------------------------------------------------------------------------

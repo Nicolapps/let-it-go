@@ -2,11 +2,11 @@ name: CI
 
 # Pull requests: lint the extension and build the Mac and iOS apps.
 # Pushes to main (and manual runs): the same, then, once both are green, publish a signed,
-# notarized Release build of the Mac app as a GitHub release, and upload a Release build of the
-# iOS app to App Store Connect for TestFlight.
+# notarized Release build of the Mac app as a GitHub release, and upload Release builds of the
+# iOS and Mac apps to App Store Connect for TestFlight.
 #
 # Signing: the release job needs the repository secrets described in docs/ci-cd.md (run
-# `just setup-signing`), and the TestFlight job an App Store Connect API key (run
+# `just setup-signing`), and the TestFlight jobs an App Store Connect API key (run
 # `just setup-testflight`). Unlike an ordinary app, an ad-hoc signed build is no use here: the app
 # group ID is hardcoded to the team, and Safari only loads unsigned extensions in developer mode.
 
@@ -286,7 +286,7 @@ jobs:
         run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
 
   testflight:
-    name: Upload to TestFlight
+    name: Upload to TestFlight (iOS)
     needs: [lint, build]
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: xcode-27
@@ -410,6 +410,142 @@ jobs:
         run: |
           marketing_version=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$ARCHIVE_PATH/Info.plist")
           echo "Uploaded Let It Go for iOS ${marketing_version} (build ${BUILD_NUMBER}, ${COMMIT}) to App Store Connect. It appears in TestFlight once Apple has processed it." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"
+
+  # The Mac App Store build of the Mac app, for TestFlight on the Mac. Unlike the Developer ID
+  # build in the release job, it's signed for the App Store at export, with the same API key and
+  # the same steps as the iOS job above.
+  testflight-macos:
+    name: Upload to TestFlight (macOS)
+    needs: [lint, build]
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: xcode-27
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      ARCHIVE_PATH: build/LetItGo-macOS-AppStore.xcarchive
+      EXPORT_PATH: build/LetItGo-macOS-AppStore
+    steps:
+      - name: Check App Store Connect secrets
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          missing=()
+          [ -n "$APPLE_TEAM_ID" ] || missing+=(APPLE_TEAM_ID)
+          [ -n "$API_KEY_P8_BASE64" ] || missing+=(APP_STORE_CONNECT_API_KEY_P8)
+          [ -n "$API_KEY_ID" ] || missing+=(APP_STORE_CONNECT_KEY_ID)
+          [ -n "$API_ISSUER_ID" ] || missing+=(APP_STORE_CONNECT_ISSUER_ID)
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error title=Missing App Store Connect secrets::${missing[*]} not set. Run \`just setup-testflight\` (see docs/ci-cd.md)."
+            exit 1
+          fi
+
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the build number is the commit count
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      # Same build number as the iOS job: App Store Connect counts builds per platform, so the
+      # two don't collide.
+      - name: Determine version
+        id: version
+        run: |
+          {
+            echo "build_number=$(git rev-list --count HEAD)"
+            echo "commit=$(git rev-parse --short HEAD)"
+          } | tee -a "$GITHUB_OUTPUT"
+
+      # Outside the checkout, and removed at the end of the job.
+      - name: Write API key
+        env:
+          API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          key_path="$RUNNER_TEMP/AuthKey.p8"
+          echo "$API_KEY_P8_BASE64" | base64 --decode > "$key_path"
+          chmod 600 "$key_path"
+          echo "API_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      # Unsigned, for the same reason as the iOS archive: the API key can't sign at archive time.
+      - name: Archive
+        env:
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcodebuild archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            -archivePath "$ARCHIVE_PATH" \
+            "CURRENT_PROJECT_VERSION=$BUILD_NUMBER" \
+            "GIT_COMMIT=$COMMIT" \
+            "DEVELOPMENT_TEAM=$APPLE_TEAM_ID" \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+      # As on iOS, the export keeps the entitlements of the archive's signature. Unsigned, the
+      # archive has none, and the Mac App Store rejects an app without the App Sandbox. The
+      # entitlements files don't list the sandbox (ENABLE_APP_SANDBOX adds it at build time) and
+      # use $(TeamIdentifierPrefix), which only Xcode expands, so write the final ones here.
+      - name: Add entitlements
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          app="$ARCHIVE_PATH/Products/Applications/Let It Go.app"
+          group="$APPLE_TEAM_ID.dev.ettlin.nicolas.letitgo"
+          entitlements="$RUNNER_TEMP/macos.entitlements"
+          plutil -create xml1 "$entitlements"
+          plutil -insert com.apple.security.app-sandbox -bool YES "$entitlements"
+          plutil -insert com.apple.security.application-groups -json "[\"$group\"]" "$entitlements"
+          plutil -p "$entitlements"
+
+          # The app and the extension have the same entitlements; the extension goes first.
+          codesign --force --sign - --entitlements "$entitlements" \
+            "$app/Contents/PlugIns/Let It Go Extension.appex"
+          codesign --force --sign - --entitlements "$entitlements" "$app"
+          codesign -d --entitlements - "$app" | grep -F "$group"
+          codesign -d --entitlements - "$app/Contents/PlugIns/Let It Go Extension.appex" | grep -F app-sandbox
+
+      # Automatic signing with the API key, as on iOS: Xcode uses the team's cloud-managed
+      # distribution certificates and creates the Mac App Store provisioning profiles itself.
+      # The export packages the app as an installer and uploads it to App Store Connect.
+      - name: Upload to App Store Connect
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist scripts/ExportOptions.plist \
+            -exportPath "$EXPORT_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$API_KEY_ID" \
+            -authenticationKeyIssuerID "$API_ISSUER_ID" \
+            | xcbeautify --renderer github-actions
+
+      - name: Summarize
+        env:
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          COMMIT: ${{ steps.version.outputs.commit }}
+        run: |
+          marketing_version=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$ARCHIVE_PATH/Info.plist")
+          echo "Uploaded Let It Go for macOS ${marketing_version} (build ${BUILD_NUMBER}, ${COMMIT}) to App Store Connect. It appears in TestFlight once Apple has processed it." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Remove API key
         if: always()

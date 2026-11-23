@@ -4,7 +4,7 @@ All automation lives in `.github/workflows`.
 
 | Workflow | Runs on | What it does |
 | --- | --- | --- |
-| `ci.yml` | pull requests, pushes to `main`, manual dispatch | `just lint` (the extension's JSON, JavaScript and rule regexes) and Debug builds of the Mac and iOS apps with their extensions (iOS for the simulator, unsigned). On `main` and manual runs, once lint and build pass, a `release` job archives a signed, notarized Release build of the Mac app and publishes it as a GitHub release, and a `testflight` job uploads a Release build of the iOS app to App Store Connect for TestFlight. |
+| `ci.yml` | pull requests, pushes to `main`, manual dispatch | `just lint` (the extension's JSON, JavaScript and rule regexes) and Debug builds of the Mac and iOS apps with their extensions (iOS for the simulator, unsigned). On `main` and manual runs, once lint and build pass, a `release` job archives a signed, notarized Release build of the Mac app and publishes it as a GitHub release, and the `testflight` and `testflight-macos` jobs upload Release builds of the iOS and Mac apps to App Store Connect for TestFlight. |
 | `workflow-lint.yml` | pull requests, pushes to `main` | Runs [actionlint](https://github.com/rhysd/actionlint) and [zizmor](https://docs.zizmor.sh) against the workflows themselves. |
 
 The macOS jobs run on the `xcode-27` image, which is still a GitHub preview: the project is saved in the Xcode 27 format and does not open in Xcode 26. Move to `macos-27` once that image is generally available, and drop the label from `.github/actionlint.yaml`.
@@ -13,7 +13,7 @@ Dependabot (`.github/dependabot.yml`) keeps the SHA-pinned actions current with 
 
 ## Releases
 
-Every push to `main` produces one GitHub release of the Mac app, and one TestFlight build of the iOS app (see [TestFlight](#testflight) below). The two jobs are independent: one failing doesn't stop the other.
+Every push to `main` produces one GitHub release of the Mac app, and one TestFlight build each of the iOS and Mac apps (see [TestFlight](#testflight) below). The three jobs are independent: one failing doesn't stop the others.
 
 The Mac release:
 
@@ -26,11 +26,13 @@ Re-running a workflow reuses the same tag and replaces the asset instead of fail
 
 ## TestFlight
 
-The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App Store Connect. Once Apple has processed it, usually within a few minutes to an hour, it is available to the app's internal testers in TestFlight. Testing with external testers, and submitting to the App Store, stay manual steps in App Store Connect.
+The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App Store Connect, and the `testflight-macos` job does the same with a Mac App Store build of the *Let It Go* scheme. Once Apple has processed a build, usually within a few minutes to an hour, it is available to the app's internal testers in TestFlight, on the iPhone and iPad for one and on the Mac for the other. Both platforms are one app in App Store Connect, so they share the TestFlight testers and groups.
+
+The Mac App Store build is separate from the Developer ID build of the GitHub release: it is signed for the App Store at export, and only installs through TestFlight or the App Store. Testing with external testers, and submitting to the App Store, stay manual steps in App Store Connect.
 
 - Version and build number: the same as the Mac release, `MARKETING_VERSION` and the commit count, with the short hash in the Info.plist as `GitCommit`. App Store Connect refuses a build number it has already seen, so re-running the job for a commit it has already uploaded fails at the upload; there's nothing to redo in that case.
 - Export: `scripts/ExportOptions.plist`, the same file `just upload` and `just upload-ios` use.
-- Signing: the archive is built unsigned, because xcodebuild can't use an API key to sign at archive time (Apple refuses it with *Authentication failed*). The job then signs it locally, with no certificate, only to attach the app's and the extension's entitlements, so the `group.dev.ettlin.nicolas.letitgo` App Group survives. The export signs for real with the App Store Connect API key below: Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, so no certificate or profile is kept in the secrets.
+- Signing: the archive is built unsigned, because xcodebuild can't use an API key to sign at archive time (Apple refuses it with *Authentication failed*). The job then signs it locally, with no certificate, only to attach the app's and the extension's entitlements, so the `group.dev.ettlin.nicolas.letitgo` App Group survives. The Mac job does the same with the App Sandbox and the team-prefixed App Group, which it writes out itself, since the entitlements files leave the sandbox to `ENABLE_APP_SANDBOX` and use `$(TeamIdentifierPrefix)`, which only Xcode expands. The export signs for real with the App Store Connect API key below: Xcode uses the team's cloud-managed distribution certificate and creates or updates the App Store provisioning profiles itself, so no certificate or profile is kept in the secrets.
 - Export compliance: the app declares `ITSAppUsesNonExemptEncryption = NO`, so builds don't wait on the encryption question.
 
 ### Setting it up
@@ -38,7 +40,7 @@ The `testflight` job archives the *Let It Go (iOS)* scheme and uploads it to App
 The job fails if any of its secrets is missing, so do this once before merging the job into `main`. `just setup-testflight` walks you through all of it on your Mac, with links, checks the key against Apple and uploads the secrets with the GitHub CLI. The steps, in short:
 
 1. **Accept Apple's agreements.** App Store Connect refuses uploads, and the notary service refuses the Mac release, with *A required agreement is missing or has expired* while an updated agreement is waiting. The team's Account Holder accepts it at [developer.apple.com/account](https://developer.apple.com/account) (a banner appears when one is pending) and, if anything is marked pending, under [Agreements, Tax, and Banking](https://appstoreconnect.apple.com/business).
-2. **Add iOS to the app in App Store Connect.** The Mac and iOS apps share the bundle ID `dev.ettlin.nicolas.letitgo`, so they are one app with two platforms. In [Apps](https://appstoreconnect.apple.com/apps), open Let It Go and choose *Add Platform* › iOS in the sidebar. If the app doesn't exist yet, create it with + › *New App*, tick iOS (and macOS), and pick that bundle ID. If the bundle ID isn't offered, build the app once in Xcode with your team selected, which registers it, or [register it by hand](https://developer.apple.com/account/resources/identifiers/add/bundleId). The App Store page doesn't need to be filled in for TestFlight.
+2. **Add iOS and macOS to the app in App Store Connect.** The Mac and iOS apps share the bundle ID `dev.ettlin.nicolas.letitgo`, so they are one app with two platforms. In [Apps](https://appstoreconnect.apple.com/apps), open Let It Go and, if iOS or macOS is missing from the sidebar, add it with *Add Platform*. If the app doesn't exist yet, create it with + › *New App*, tick iOS and macOS, and pick that bundle ID. If the bundle ID isn't offered, build the app once in Xcode with your team selected, which registers it, or [register it by hand](https://developer.apple.com/account/resources/identifiers/add/bundleId). The App Store page doesn't need to be filled in for TestFlight.
 
    **Then register the App Group, once:** archive the iOS app on your Mac with your own Xcode account, for example with `just upload-ios`, or with *Product › Archive* in Xcode with the *Let It Go (iOS)* scheme. That enables App Groups on both App IDs and registers `group.dev.ettlin.nicolas.letitgo`, which the API key can't do. Without it, uploads go through but the App Group is missing from the build, so the extension can't read the redirect target set in the app.
 3. **Create an App Store Connect API key.** Under [Users and Access › Integrations › App Store Connect API](https://appstoreconnect.apple.com/access/integrations/api), choose *Team Keys* (the first time, the Account Holder clicks *Request Access*), then + with the **Admin** role. A lower role can upload but can't let Xcode create the distribution certificate and provisioning profiles. Download the `.p8` file right away: Apple only lets you download it once. Note the key ID (10 characters, also in the file name `AuthKey_<KEY ID>.p8`) and the issuer ID (a UUID shown above the list).
@@ -55,7 +57,7 @@ To start an upload without pushing, run `gh workflow run CI --ref main`. To uplo
 
 ### Installing a TestFlight build
 
-App Store Connect emails you once a build has been processed. In Let It Go › TestFlight › *Internal Testing*, create a group with + and add yourself and anyone else on the team. Testers install the build with the [TestFlight app](https://apps.apple.com/app/testflight/id899247664), signed in with the same Apple ID. Builds for testers outside the team need Apple's beta review first, under *External Testing*.
+App Store Connect emails you once a build has been processed. In Let It Go › TestFlight › *Internal Testing*, create a group with + and add yourself and anyone else on the team. Testers install the build with the [TestFlight app](https://apps.apple.com/app/testflight/id899247664), signed in with the same Apple ID. Builds for testers outside the team need Apple's beta review first, under *External Testing*. On the Mac, the TestFlight app is in the Mac App Store; the build only shows up there once the `testflight-macos` job has uploaded one and Apple has processed it.
 
 ### When the upload fails
 
@@ -63,7 +65,9 @@ App Store Connect emails you once a build has been processed. In Let It Go › T
 - *Authentication failed: Make sure a bearer token was provided* during the archive, followed by *No profiles for 'dev.ettlin.nicolas.letitgo' were found*: something is signing at archive time with the API key, which Apple refuses. The archive step must keep `CODE_SIGNING_ALLOWED=NO`.
 - A certificate or profile error during the export: the API key isn't Admin. Create a new Admin key and run `just setup-testflight` again.
 - The *Add entitlements* step fails: the archive's paths changed (target or product names). Update the paths in that step.
-- *No suitable application records were found*: iOS isn't a platform of the app in App Store Connect yet (step 2).
+- *No suitable application records were found*: the platform of the failing job (iOS or macOS) isn't on the app in App Store Connect yet (step 2).
+- The Mac export fails on a *Mac Installer Distribution* certificate: Xcode couldn't create the installer certificate that signs the package. Create one once, in Xcode › Settings › Accounts › your team › Manage Certificates › + › *Mac Installer Distribution*, and re-run the job.
+- The Mac upload is rejected because of the App Sandbox or the App Group: the *Add entitlements* step of `testflight-macos` no longer matches the targets' entitlements files. Keep the two in sync.
 - *The bundle version must be higher than the previously uploaded version*: this commit was already uploaded, usually by a re-run. There's nothing to redo.
 
 ## Mac signing and notarization
