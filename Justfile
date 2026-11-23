@@ -46,6 +46,8 @@ lint:
     node --check extension/popup/popup.js
     node --check extension/popup/settings.js
     jq empty chrome/manifest.json
+    test "$(jq -r .version extension/manifest.json)" = "$(jq -r .version chrome/manifest.json)" \
+        || { echo "extension/manifest.json and chrome/manifest.json have different versions"; exit 1; }
     node --check chrome/fallback.js
     node --check chrome/background.js
     node --check chrome/popup/popup.js
