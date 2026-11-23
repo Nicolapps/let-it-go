@@ -25,6 +25,12 @@ class ViewController: UIViewController {
         let hostingController = UIHostingController(rootView: ContentView(status: status, openSafariSettings: { [weak self] in
             self?.openSafariSettings()
         }))
+        // While an iPad rotates, the views stretch to their new size before
+        // SwiftUI redraws the gradient, uncovering whatever is behind it, which
+        // would otherwise be the system background: white in light mode.
+        let background = UIColor(named: "LaunchBackground")
+        view.backgroundColor = background
+        hostingController.view.backgroundColor = background
         addChild(hostingController)
         hostingController.view.frame = view.bounds
         hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]

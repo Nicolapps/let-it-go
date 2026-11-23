@@ -61,7 +61,7 @@ struct ContentView: View {
         #if os(macOS)
         content
         #else
-        // The checklist doesn't fit smaller iPhones, or any in landscape.
+        // The checklist doesn't fit smaller iPhones, or iPads in landscape split view.
         GeometryReader { proxy in
             ScrollView {
                 content
@@ -136,6 +136,9 @@ struct ContentView: View {
                     #endif
                 }
                 .font(.headline)
+                // Wrapped, it becomes a tall blob on narrow iPhones.
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
             }
@@ -215,13 +218,7 @@ struct ContentView: View {
             StepText("Tap your search engine") {
                 SafariSnippet {
                     HStack(spacing: 8) {
-                        // Settings shows the site's favicon once it has one, inset on
-                        // a white disc.
-                        Image(.googleLogo)
-                            .resizable()
-                            .frame(width: 13, height: 13)
-                            .frame(width: 20, height: 20)
-                            .background(.white, in: .circle)
+                        // Unlike Safari on the Mac, Settings shows no favicons.
                         Text("google.com")
                         Spacer()
                         Text("Ask")

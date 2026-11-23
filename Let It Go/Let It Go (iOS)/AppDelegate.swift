@@ -23,6 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
+        // Shows around the app while an iPad rotates.
+        window.backgroundColor = UIColor(named: "LaunchBackground")
         window.rootViewController = ViewController()
         window.makeKeyAndVisible()
         self.window = window
