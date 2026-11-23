@@ -115,11 +115,11 @@ step "2/5  Export the certificate and its private key as a .p12 file"
 cat <<EOF
   1. Open Keychain Access.
   2. In the sidebar, select the “login” keychain, then the “My Certificates” tab.
-  3. Find “$identity”.
+  3. Find “${identity}”.
      It should have a disclosure triangle with a private key inside. If it doesn't, the key
      is not on this Mac: see the “Already have one on another Mac?” note in step 1.
   4. Select the certificate row, then File → Export Items…
-     (or right-click → Export “$identity”…).
+     (or right-click → Export “${identity}”…).
   5. Choose the file format “Personal Information Exchange (.p12)” and save it,
      for example to ~/Desktop/developer-id.p12
   6. Choose a password for the file. You'll type it again below, and CI uses it to open the file.

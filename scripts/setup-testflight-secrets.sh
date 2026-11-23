@@ -154,12 +154,12 @@ if [ -n "$suggested_key_id" ]; then
 else
   read -r -p "Key ID (10 letters and digits): " key_id
 fi
-[[ "$key_id" =~ ^[A-Z0-9]{10}$ ]] || fail "“$key_id” doesn't look like a key ID: it's 10 capital letters and digits, e.g. 2X9R4HXF34."
+[[ "$key_id" =~ ^[A-Z0-9]{10}$ ]] || fail "“${key_id}” doesn't look like a key ID: it's 10 capital letters and digits, e.g. 2X9R4HXF34."
 
 read -r -p "Issuer ID: " issuer_id
 issuer_id=$(printf '%s' "$issuer_id" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
 [[ "$issuer_id" =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$ ]] \
-  || fail "“$issuer_id” doesn't look like an issuer ID: it's a UUID, e.g. 69a6de8e-1a2b-47e3-e053-5b8c7c11a4d1."
+  || fail "“${issuer_id}” doesn't look like an issuer ID: it's a UUID, e.g. 69a6de8e-1a2b-47e3-e053-5b8c7c11a4d1."
 
 say "Checking the key against Apple…"
 if ! check_output=$(xcrun notarytool history --key "$p8_path" --key-id "$key_id" --issuer "$issuer_id" 2>&1); then
@@ -189,7 +189,7 @@ else
 
 EOF
   read -r -p "Team ID: " team_id
-  [[ "$team_id" =~ ^[A-Z0-9]{10}$ ]] || fail "“$team_id” doesn't look like a team ID: it's 10 capital letters and digits."
+  [[ "$team_id" =~ ^[A-Z0-9]{10}$ ]] || fail "“${team_id}” doesn't look like a team ID: it's 10 capital letters and digits."
 fi
 
 # ---------------------------------------------------------------------------------------------
