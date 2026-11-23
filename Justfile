@@ -62,6 +62,10 @@ package-chrome:
     cd chrome && zip -qr ../{{derived}}/let-it-go-chrome.zip . -x '.*'
     @echo "Packaged {{derived}}/let-it-go-chrome.zip"
 
+# Render the Chrome Web Store images from store/chrome/store.html (needs Playwright)
+store-images:
+    node scripts/render-store-images.js
+
 # Regenerate extension/rules.json and chrome/rules.json from scripts/generate-rules.js
 rules:
     node scripts/generate-rules.js
