@@ -66,6 +66,17 @@ body {
     min-height: 100vh;
   }
 
+  /* The background fills the safe areas (see the viewport tag in
+     popup.html), but nothing else goes in them. More specific than the
+     `main` rule below, which would otherwise win. */
+  body > main {
+    padding:
+      calc(var(--inset) + env(safe-area-inset-top))
+      calc(var(--inset) + env(safe-area-inset-right))
+      calc(var(--inset) + env(safe-area-inset-bottom))
+      calc(var(--inset) + env(safe-area-inset-left));
+  }
+
   .redirect,
   input {
     font-size: 16px;
