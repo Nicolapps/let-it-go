@@ -95,7 +95,7 @@ upload-ios:
 setup-signing:
     scripts/setup-signing-secrets.sh
 
-# Upload the App Store Connect API key so CI uploads the iOS app to TestFlight
+# Upload the App Store Connect API key so CI uploads the iOS and Mac apps to TestFlight
 setup-testflight:
     scripts/setup-testflight-secrets.sh
 
