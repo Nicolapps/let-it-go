@@ -1,6 +1,7 @@
 // Mirrors rules.json as dynamic rules that point at the redirect target chosen
 // in the app, which the native handler reads from the shared App Group.
 
+// Also what rules.json points at.
 const DEFAULT_BASE = "http://go";
 
 async function fetchRedirectBase() {
@@ -22,24 +23,35 @@ function normalizeBase(value) {
 
 async function syncRules() {
   const base = await fetchRedirectBase();
-  const target = base.replace(/\\/g, "\\\\") + "/\\1";
+  const staticRules = await (await fetch(browser.runtime.getURL("rules.json"))).json();
+  // Swap only the base, keeping each rule's own path (http://go/\1/\2…).
+  const rules = staticRules.map((rule) => ({
+    ...rule,
+    // Outrank the static copy, which always points at http://go.
+    priority: rule.priority + 1,
+    action: { ...rule.action, redirect: { regexSubstitution: retarget(rule.action.redirect.regexSubstitution, base) } },
+  }));
 
   const current = await browser.declarativeNetRequest.getDynamicRules();
-  if (current.length > 0 && current.every((rule) => rule.action.redirect?.regexSubstitution === target)) {
+  const target = new Map(rules.map((rule) => [rule.id, rule.action.redirect.regexSubstitution]));
+  if (
+    current.length === rules.length &&
+    current.every((rule) => rule.action.redirect?.regexSubstitution === target.get(rule.id))
+  ) {
     return base;
   }
 
-  const staticRules = await (await fetch(browser.runtime.getURL("rules.json"))).json();
   await browser.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: current.map((rule) => rule.id),
-    addRules: staticRules.map((rule) => ({
-      ...rule,
-      // Outrank the static copy, which always points at http://go.
-      priority: rule.priority + 1,
-      action: { ...rule.action, redirect: { regexSubstitution: target } },
-    })),
+    addRules: rules,
   });
   return base;
+}
+
+// "http://go/\1/\2" → "https://go.example.com/\1/\2". Backslashes in the base
+// are escaped, since the substitution treats them as capture references.
+function retarget(substitution, base) {
+  return base.replace(/\\/g, "\\\\") + substitution.slice(DEFAULT_BASE.length);
 }
 
 // Tells the app which search engines the user has allowed in Safari Settings ›
