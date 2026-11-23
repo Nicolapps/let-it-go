@@ -55,9 +55,15 @@ body {
 /* On iPhone the popup is a sheet as wide as the screen, and Safari zooms into
    fields with text smaller than 16 px. */
 @media (pointer: coarse) {
+  /* The sheet is taller than the content, so the gradient fills it and the
+     content sits in the middle. */
   body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: auto;
     min-width: 340px;
+    min-height: 100vh;
   }
 
   .redirect,
