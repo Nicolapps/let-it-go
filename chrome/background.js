@@ -1,7 +1,7 @@
 // The Safari extension has its own version in extension/background.js: make shared changes in both.
 
 // Mirrors rules.json as dynamic rules that point at the redirect target saved
-// in the popup. With no app, the target lives in chrome.storage.sync instead of
+// in the popup. With no app, the target lives in chrome.storage.local instead of
 // the App Group, and there is no setup checklist to report allowed origins to.
 
 // Also what rules.json points at.
@@ -9,7 +9,7 @@ const DEFAULT_BASE = "http://go";
 
 async function fetchRedirectBase() {
   try {
-    const { redirectBase } = await chrome.storage.sync.get("redirectBase");
+    const { redirectBase } = await chrome.storage.local.get("redirectBase");
     return normalizeBase(redirectBase);
   } catch {
     return DEFAULT_BASE;
@@ -69,9 +69,9 @@ function syncRules() {
 
 chrome.runtime.onInstalled.addListener(syncRules);
 chrome.runtime.onStartup.addListener(syncRules);
-// Saved in the popup, or synced from another computer.
+// Saved in the popup.
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "sync" && "redirectBase" in changes) syncRules();
+  if (area === "local" && "redirectBase" in changes) syncRules();
 });
 
 // fallback.js and the popup ask for the target, which also keeps the rules
