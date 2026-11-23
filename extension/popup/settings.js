@@ -1,6 +1,7 @@
+// The Chrome extension has its own version in chrome/popup/settings.js: make shared changes in both.
+
 // Where the popup reads and saves the redirect target, in Safari: the native
-// handler, which keeps it in the App Group the app shares. The Chrome build
-// replaces this file with chrome/popup/settings.js.
+// handler, which keeps it in the App Group the app shares.
 
 async function loadRedirectBase() {
   const response = await browser.runtime.sendNativeMessage("application.id", { type: "redirectBase" });

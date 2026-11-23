@@ -1,3 +1,5 @@
+// The Chrome extension has its own version in chrome/background.js: make shared changes in both.
+
 // Mirrors rules.json as dynamic rules that point at the redirect target chosen
 // in the app, which the native handler reads from the shared App Group.
 

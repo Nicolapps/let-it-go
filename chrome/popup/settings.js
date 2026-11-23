@@ -1,6 +1,8 @@
+// The Safari extension has its own version in extension/popup/settings.js: make shared changes in both.
+
 // Where the popup reads and saves the redirect target, in Chrome: there is no
 // app to share it with, so it lives in chrome.storage.sync, which follows the
-// user to their other computers. Replaces extension/popup/settings.js.
+// user to their other computers.
 
 async function loadRedirectBase() {
   const { redirectBase } = await chrome.storage.sync.get("redirectBase");

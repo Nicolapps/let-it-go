@@ -30,9 +30,8 @@ The last two steps are ticked off once Safari has run the extension, so open Saf
 
 Chrome needs no app: the extension's toolbar popup is the whole interface.
 
-1. Run `just chrome`, which assembles the extension in `build/chrome`.
-2. Open `chrome://extensions`, turn on *Developer mode*, click *Load unpacked* and pick `build/chrome`.
-3. Optionally, click the extension's toolbar button to change where `go/` links point to. The setting syncs with your Chrome profile.
+1. Open `chrome://extensions`, turn on *Developer mode*, click *Load unpacked* and pick the `chrome` folder.
+2. Optionally, click the extension's toolbar button to change where `go/` links point to. The setting syncs with your Chrome profile.
 
 ## How it works
 
@@ -44,20 +43,23 @@ The app and extension share the redirect target through an App Group. iOS requir
 - `extension/background.js` copies those rules so they point at the redirect target set in the app.
 - `extension/fallback.js` handles the searches the rules can't match, such as `go/foo?x=1`.
 
-The Chrome extension reuses all of `extension/` but its manifest and background script, which talk to the app through native messaging. `scripts/build-chrome.js` lays the Chrome-only files in `chrome/` over it: a manifest without native messaging, a background script that reads the redirect target from `chrome.storage.sync`, and the popup's `settings.js`, the one popup file that differs between the two.
+The Chrome extension in `chrome/` is a copy of `extension/`, so that each folder loads on its own. Each copied file starts with a comment pointing at its twin: change both. `just rules` writes both copies of `rules.json`, and the icons are copied as they are. Three files differ:
+
+- `manifest.json` has no native messaging, which Chrome doesn't need without an app.
+- `background.js` reads the redirect target from `chrome.storage.sync` instead of asking the app.
+- `popup/settings.js` saves the popup's field there too.
 
 ## Development
 
-Requires [just](https://github.com/casey/just), plus Xcode for the Safari apps or Node.js for the Chrome extension.
+Requires [just](https://github.com/casey/just), plus Xcode for the Safari apps.
 
 ```sh
 just run          # build and launch the Debug app
 just build-ios    # build the iOS app for the simulator
 just lint         # validate the extension's JSON, JavaScript and rule regexes
 just try <url>    # show where a search URL would be redirected
-just rules        # regenerate extension/rules.json
-just chrome       # assemble the Chrome extension in build/chrome
-just package-chrome  # zip it for the Chrome Web Store
+just rules        # regenerate extension/rules.json and chrome/rules.json
+just package-chrome  # zip the Chrome extension for the Chrome Web Store
 just upload       # archive a Release build and upload it to App Store Connect
 just upload-ios   # the same for the iOS app
 ```

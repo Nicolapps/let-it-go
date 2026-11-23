@@ -1,0 +1,215 @@
+/* Copied in extension/popup/popup.css for the Safari extension: keep both copies in sync. */
+
+/* The app window's look: always dark, on the app icon's gradient. */
+
+:root {
+  color-scheme: light dark;
+  /* The space around and between everything. */
+  --inset: 28px;
+
+  --text: #fff;
+  --label: rgb(255 255 255 / 0.75);
+  --title-shadow: rgb(14 15 51 / 0.55);
+  --icon-shadow: rgb(106 106 184 / 0.6);
+  --background:
+    radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
+    radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
+    radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
+    radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
+    linear-gradient(to bottom, #0e0f33, #1d1c5c 45%, #3b2d84);
+
+  --field-bg: #1e1e22;
+  --field-text: #fff;
+  --field-border: rgb(255 255 255 / 0.12);
+  --saved: #66d4cf;
+}
+
+/* The field follows the system appearance, like in the app. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --field-bg: #fff;
+    --field-text: #000;
+    --field-border: rgb(0 0 0 / 0.1);
+    --saved: #34c759;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  position: relative;
+  width: 340px;
+  overflow: hidden;
+  color: var(--text);
+  font: 13px -apple-system, system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+/* On iPhone the popup is a sheet as wide as the screen, and Safari zooms into
+   fields with text smaller than 16 px. */
+@media (pointer: coarse) {
+  /* The sheet is taller than the content, so the gradient fills it and the
+     content sits in the middle. */
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: auto;
+    min-width: 340px;
+    min-height: 100vh;
+  }
+
+  /* The background fills the safe areas (see the viewport tag in
+     popup.html), but nothing else goes in them. More specific than the
+     `main` rule below, which would otherwise win. */
+  body > main {
+    padding:
+      calc(var(--inset) + env(safe-area-inset-top))
+      calc(var(--inset) + env(safe-area-inset-right))
+      calc(var(--inset) + env(safe-area-inset-bottom))
+      calc(var(--inset) + env(safe-area-inset-left));
+  }
+
+  .redirect,
+  input {
+    font-size: 16px;
+  }
+
+  input {
+    height: 34px;
+  }
+}
+
+/* Not on body: Safari keeps the popover's own background, which a body
+   background would go to. */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--background);
+}
+
+#snow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: var(--inset);
+}
+
+/* The artwork fills the middle 80% of the image, so the negative margin
+   leaves an 80 px icon with no invisible padding around it. */
+.icon {
+  width: 100px;
+  height: 100px;
+  margin: -10px;
+  filter: drop-shadow(0 12px 28px var(--icon-shadow));
+  -webkit-user-drag: none;
+}
+
+/* Trimmed to the letters, so the gaps above and below it are what they say. */
+h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  text-box: trim-both cap alphabetic;
+  text-shadow: 0 3px 10px var(--title-shadow);
+}
+
+.redirect {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  font-size: 15px;
+}
+
+.redirect > span:first-child {
+  color: var(--label);
+  white-space: nowrap;
+}
+
+.field {
+  position: relative;
+  display: block;
+  flex: 1;
+}
+
+.field.shake {
+  animation: shake 0.31s linear;
+}
+
+@keyframes shake {
+  20% { transform: translateX(-8px); }
+  42% { transform: translateX(7px); }
+  65% { transform: translateX(-5px); }
+  84% { transform: translateX(3px); }
+}
+
+input {
+  width: 100%;
+  height: 28px;
+  padding: 0 26px 0 8px;
+  border: 1px solid var(--field-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--field-bg);
+  color: var(--field-text);
+  font: inherit;
+  font-size: 15px;
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
+}
+
+/* Chrome can't parse Safari's accent color, drops that declaration and keeps
+   this blue one. */
+input:focus {
+  box-shadow: 0 0 0 3px rgb(0 122 255 / 0.6);
+  box-shadow: 0 0 0 3px color-mix(in srgb, -apple-system-control-accent 60%, transparent);
+}
+
+#feedback {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+#feedback.saved,
+#feedback.invalid {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+#feedback.saved {
+  color: var(--saved);
+}
+
+#feedback.invalid {
+  color: #ff453a;
+}

@@ -38,7 +38,7 @@
         "*://search.yahoo.com/search*",
         "*://www.ecosia.org/search*"
       ],
-      "js": ["browser-alias.js", "fallback.js"],
+      "js": ["fallback.js"],
       "run_at": "document_start"
     }
   ]

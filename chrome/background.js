@@ -1,7 +1,8 @@
-// Chrome's counterpart of extension/background.js: mirrors rules.json as
-// dynamic rules that point at the redirect target saved in the popup. With no
-// app, the target lives in chrome.storage.sync instead of the App Group, and
-// there is no setup checklist to report allowed origins to.
+// The Safari extension has its own version in extension/background.js: make shared changes in both.
+
+// Mirrors rules.json as dynamic rules that point at the redirect target saved
+// in the popup. With no app, the target lives in chrome.storage.sync instead of
+// the App Group, and there is no setup checklist to report allowed origins to.
 
 // Also what rules.json points at.
 const DEFAULT_BASE = "http://go";

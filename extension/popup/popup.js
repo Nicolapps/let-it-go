@@ -1,3 +1,5 @@
+// Copied in chrome/popup/popup.js for the Chrome extension: keep both copies in sync.
+
 // The toolbar button's popover: the app's "Redirect go/ to" field on its
 // snowy background. settings.js, which differs between Safari and Chrome,
 // loads and saves the value.
