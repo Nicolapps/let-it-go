@@ -1,6 +1,6 @@
 // The toolbar button's popover: the app's "Redirect go/ to" field on its
-// snowy background. Saving goes through the native handler, which writes the
-// same App Group setting the app does.
+// snowy background. settings.js, which differs between Safari and Chrome,
+// loads and saves the value.
 
 const DEFAULT_BASE = "http://go";
 
@@ -30,9 +30,7 @@ async function commit() {
   value = trimmed;
   input.value = trimmed;
   input.blur();
-  await browser.runtime.sendNativeMessage("application.id", { type: "setRedirectBase", redirectBase: trimmed });
-  // Points the rules at the new target.
-  await browser.runtime.sendMessage({ type: "redirectBase" });
+  await saveRedirectBase(trimmed);
   showFeedback("saved");
 }
 
@@ -71,8 +69,8 @@ input.addEventListener("keydown", (event) => {
 });
 input.addEventListener("blur", commit);
 
-browser.runtime.sendNativeMessage("application.id", { type: "redirectBase" }).then((response) => {
-  value = response?.redirectBase || DEFAULT_BASE;
+loadRedirectBase().then((redirectBase) => {
+  value = redirectBase || DEFAULT_BASE;
   if (document.activeElement !== input) input.value = value;
 });
 input.value = value;

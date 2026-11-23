@@ -44,8 +44,23 @@ lint:
     node --check extension/fallback.js
     node --check extension/background.js
     node --check extension/popup/popup.js
+    node --check extension/popup/settings.js
+    jq empty chrome/manifest.json
+    node --check chrome/background.js
+    node --check chrome/browser-alias.js
+    node --check chrome/popup/settings.js
     node -e 'for (const r of require("./extension/rules.json")) new RegExp(r.condition.regexFilter)'
     node scripts/generate-rules.js --check
+
+# Assemble the Chrome extension in build/chrome, to load unpacked in chrome://extensions
+chrome:
+    node scripts/build-chrome.js
+
+# Zip the Chrome extension for the Chrome Web Store
+package-chrome: chrome
+    rm -f {{derived}}/let-it-go-chrome.zip
+    cd {{derived}}/chrome && zip -qr ../let-it-go-chrome.zip .
+    @echo "Packaged {{derived}}/let-it-go-chrome.zip"
 
 # Regenerate extension/rules.json from scripts/generate-rules.js
 rules:

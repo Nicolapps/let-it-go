@@ -4,7 +4,7 @@
 
 <h1 align="center">Let It Go</h1>
 
-<p align="center">A Safari extension that opens <code>go/</code> links instead of searching for them.</p>
+<p align="center">A Safari and Chrome extension that opens <code>go/</code> links instead of searching for them.</p>
 
 Typing `go/foo` into Safari's address bar sends it to your search engine. Let It Go catches those searches and redirects them to `http://go/foo`, or to a go-link server of your choice.
 
@@ -26,6 +26,14 @@ It works with Google, Bing, DuckDuckGo, Yahoo and Ecosia, on macOS 15 or later a
 
 The last two steps are ticked off once Safari has run the extension, so open Safari once if they don't update.
 
+### Chrome
+
+Chrome needs no app: the extension's toolbar popup is the whole interface.
+
+1. Run `just chrome`, which assembles the extension in `build/chrome`.
+2. Open `chrome://extensions`, turn on *Developer mode*, click *Load unpacked* and pick `build/chrome`.
+3. Optionally, click the extension's toolbar button to change where `go/` links point to. The setting syncs with your Chrome profile.
+
 ## How it works
 
 The Mac and iOS apps are separate targets that share almost everything: the SwiftUI window (`Let It Go/ContentView.swift`, where only the Settings replicas and a few controls differ per platform), the extension status polling (`ExtensionStatus.swift`), the native extension handler and the whole web extension. Each platform only has its own small host: an AppKit view controller on the Mac, a UIKit one on iOS (`Let It Go (iOS)`).
@@ -36,9 +44,11 @@ The app and extension share the redirect target through an App Group. iOS requir
 - `extension/background.js` copies those rules so they point at the redirect target set in the app.
 - `extension/fallback.js` handles the searches the rules can't match, such as `go/foo?x=1`.
 
+The Chrome extension reuses all of `extension/` but its manifest and background script, which talk to the app through native messaging. `scripts/build-chrome.js` lays the Chrome-only files in `chrome/` over it: a manifest without native messaging, a background script that reads the redirect target from `chrome.storage.sync`, and the popup's `settings.js`, the one popup file that differs between the two.
+
 ## Development
 
-Requires Xcode and [just](https://github.com/casey/just).
+Requires [just](https://github.com/casey/just), plus Xcode for the Safari apps or Node.js for the Chrome extension.
 
 ```sh
 just run          # build and launch the Debug app
@@ -46,6 +56,8 @@ just build-ios    # build the iOS app for the simulator
 just lint         # validate the extension's JSON, JavaScript and rule regexes
 just try <url>    # show where a search URL would be redirected
 just rules        # regenerate extension/rules.json
+just chrome       # assemble the Chrome extension in build/chrome
+just package-chrome  # zip it for the Chrome Web Store
 just upload       # archive a Release build and upload it to App Store Connect
 just upload-ios   # the same for the iOS app
 ```

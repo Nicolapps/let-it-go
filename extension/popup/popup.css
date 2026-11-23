@@ -179,7 +179,10 @@ input {
   cursor: text;
 }
 
+/* Chrome can't parse Safari's accent color, drops that declaration and keeps
+   this blue one. */
 input:focus {
+  box-shadow: 0 0 0 3px rgb(0 122 255 / 0.6);
   box-shadow: 0 0 0 3px color-mix(in srgb, -apple-system-control-accent 60%, transparent);
 }
 
