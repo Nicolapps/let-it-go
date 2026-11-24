@@ -57,17 +57,30 @@ body {
 @media (pointer: coarse) {
   /* Safari paints the sheet's strip under the home indicator and its title
      bar, outside the page, with the page's background color, and only a
-     solid one: the gradient's top color. The gradient fades into it at both
-     ends, so the page runs into those bars without a seam. */
+     solid one. The gradient fades into it at both ends, so the page runs
+     into those bars without a seam. In dark mode it's the gradient's top
+     color. */
   html {
     --edge: #0e0f33;
+    --edge-fade: 60px;
     background-color: var(--edge);
+  }
+
+  /* The title bar's text follows the system appearance and can't be
+     changed, so in light mode its black title needs a light bar: the
+     gradient's lavender glow. */
+  @media (prefers-color-scheme: light) {
+    html {
+      --edge: #6a6ab8;
+      /* Longer, so the light bar doesn't end in a band against the navy. */
+      --edge-fade: 160px;
+    }
   }
 
   /* `html` beats the general rules below. */
   html body::before {
     background:
-      linear-gradient(to bottom, var(--edge), transparent 60px, transparent calc(100% - 120px), var(--edge)),
+      linear-gradient(to bottom, var(--edge), transparent var(--edge-fade), transparent calc(100% - 120px), var(--edge)),
       var(--background);
   }
 
