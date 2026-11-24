@@ -76,8 +76,8 @@ body {
      changed, so in light mode its black title needs a light bar: a pale
      tint of the lavender glow, with AAA contrast (10.5:1). Fading it into
      the navy would go through muddy grays, so the gradient instead runs
-     from it through the glow to the deep purples in the middle, where the
-     white content sits. */
+     from it to the deep purples in the middle, where the white content
+     sits, in Oklab so it stays bright and even on the way. */
   @media (prefers-color-scheme: light) {
     html {
       --edge: #b4b4db;
@@ -91,7 +91,7 @@ body {
         radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
         radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
         radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
-        linear-gradient(to bottom, var(--edge), #6a6ab8 22%, #332f7d 45%, #3b2d84 75%, #6a6ab8 90%, var(--edge));
+        linear-gradient(to bottom in oklab, var(--edge), #332f7d 45%, #3b2d84 75%, var(--edge));
     }
   }
 
