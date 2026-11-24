@@ -83,15 +83,17 @@ body {
       --edge: #b4b4db;
     }
 
-    /* The edge fade on top, as the glows tint the edges. */
+    /* The edge fade on top, as the glows tint the edges. Fixed lengths
+       rather than percentages keep the pale bands short on the short
+       sheet. */
     html body::before {
       background:
-        linear-gradient(to bottom, var(--edge), transparent 100px, transparent calc(100% - 120px), var(--edge)),
+        linear-gradient(to bottom, var(--edge), transparent 50px, transparent calc(100% - 60px), var(--edge)),
         radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
         radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
         radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
         radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
-        linear-gradient(to bottom in oklab, var(--edge), #332f7d 45%, #3b2d84 75%, var(--edge));
+        linear-gradient(to bottom in oklab, var(--edge), #332f7d 120px, #3b2d84 calc(100% - 100px), var(--edge));
     }
   }
 
