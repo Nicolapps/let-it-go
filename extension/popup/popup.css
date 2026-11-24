@@ -55,6 +55,28 @@ body {
 /* On iPhone the popup is a sheet as wide as the screen, and Safari zooms into
    fields with text smaller than 16 px. */
 @media (pointer: coarse) {
+  /* Safari paints the sheet's strip under the home indicator and its title
+     bar, outside the page, with the page's background color, and only a
+     solid one: the gradient's top color. The gradient fades into it at both
+     ends, so the page runs into those bars without a seam. */
+  html {
+    --edge: #0e0f33;
+    background-color: var(--edge);
+  }
+
+  /* `html` beats the general rules below. */
+  html body::before {
+    background:
+      linear-gradient(to bottom, var(--edge), transparent 60px, transparent calc(100% - 120px), var(--edge)),
+      var(--background);
+  }
+
+  /* The snow fades in and out with it rather than starting at a hard line. */
+  html #snow {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 80px, #000 calc(100% - 120px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 80px, #000 calc(100% - 120px), transparent);
+  }
+
   /* The sheet is taller than the content, so the gradient fills it and the
      content sits in the middle. */
   body {
