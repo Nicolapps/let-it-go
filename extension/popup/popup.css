@@ -57,8 +57,9 @@ body {
 @media (pointer: coarse) {
   /* Safari paints the sheet's strip under the home indicator and its title
      bar, outside the page, with the page's background color, and only a
-     solid one: the gradient's top color. The gradient fades into it at both
-     ends, so the page runs into those bars without a seam. */
+     solid one. The gradient fades into it at both ends, so the page runs
+     into those bars without a seam. In dark mode it's the gradient's top
+     color. */
   html {
     --edge: #0e0f33;
     background-color: var(--edge);
@@ -69,6 +70,29 @@ body {
     background:
       linear-gradient(to bottom, var(--edge), transparent 60px, transparent calc(100% - 120px), var(--edge)),
       var(--background);
+  }
+
+  /* The title bar's text follows the system appearance and can't be
+     changed, so in light mode its black title needs a light bar: a pale
+     tint of the lavender glow, with AAA contrast (10.5:1). Fading it into
+     the navy would go through muddy grays, so the gradient instead runs
+     from it to the deep purples in the middle, where the white content
+     sits, in Oklab so it stays bright and even on the way. */
+  @media (prefers-color-scheme: light) {
+    html {
+      --edge: #b4b4db;
+    }
+
+    /* The edge fade on top, as the glows tint the edges. */
+    html body::before {
+      background:
+        linear-gradient(to bottom, var(--edge), transparent 100px, transparent calc(100% - 120px), var(--edge)),
+        radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
+        radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
+        radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
+        radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
+        linear-gradient(to bottom in oklab, var(--edge), #332f7d 45%, #3b2d84 75%, var(--edge));
+    }
   }
 
   /* The snow fades in and out with it rather than starting at a hard line. */
