@@ -55,12 +55,11 @@ body {
 /* On iPhone the popup is a sheet as wide as the screen, and Safari zooms into
    fields with text smaller than 16 px. */
 @media (pointer: coarse) {
-  /* Safari can show the sheet past the bottom of the viewport (under the
-     home indicator). Run the gradient further down so that strip isn't
-     white; the viewport doesn't scroll (body's overflow goes to it), so
-     the extra part only shows there. */
-  body::before {
-    bottom: -100px;
+  /* Safari paints the sheet's strip under the home indicator, outside the
+     page, with the page's background color, so give the root one close to
+     the gradient's bottom edge. */
+  html {
+    background-color: #6a4a9e;
   }
 
   /* The sheet is taller than the content, so the gradient fills it and the
