@@ -56,10 +56,18 @@ body {
    fields with text smaller than 16 px. */
 @media (pointer: coarse) {
   /* Safari paints the sheet's strip under the home indicator, outside the
-     page, with the page's background color, so give the root one close to
-     the gradient's bottom edge. */
+     page, with the page's background color, and only a solid one. The
+     gradient fades into that same color at the bottom, so the page runs
+     into the strip without a seam. */
   html {
-    background-color: #6a4a9e;
+    --edge: #5b3f9a;
+    background-color: var(--edge);
+  }
+
+  html body::before { /* beats the general body::before rule below */
+    background:
+      linear-gradient(to bottom, transparent calc(100% - 90px), var(--edge)),
+      var(--background);
   }
 
   /* The sheet is taller than the content, so the gradient fills it and the
