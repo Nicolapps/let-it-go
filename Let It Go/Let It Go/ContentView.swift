@@ -59,12 +59,16 @@ struct ContentView: View {
     @ViewBuilder
     private var page: some View {
         #if os(macOS)
-        content
+        content(columns: nil)
         #else
         // The checklist doesn't fit smaller iPhones, or iPads in landscape split view.
         GeometryReader { proxy in
+            let columns = Columns(besideFoldIn: proxy)
             ScrollView {
-                content
+                content(columns: columns)
+                    .alignmentGuide(VerticalAlignment.center) { dimensions in
+                        columns?.centerGuide(for: dimensions, in: proxy.size.height) ?? dimensions[VerticalAlignment.center]
+                    }
                     .frame(maxWidth: .infinity, minHeight: proxy.size.height)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -73,29 +77,38 @@ struct ContentView: View {
         #endif
     }
 
-    private var content: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: 24)
+    /// One column, or the header and the checklist side by side when `columns`
+    /// says where. The same views either way, so an edit of the redirect target
+    /// survives opening an iPhone Duo or turning it around.
+    private func content(columns: Columns?) -> some View {
+        let layout = columns.map { AnyLayout(HStackLayout(spacing: $0.gap)) } ?? AnyLayout(VStackLayout(spacing: 0))
+        let iconSize = columns == nil ? Self.iconSize : Self.columnsIconSize
 
-            AppIcon()
-                .frame(width: Self.iconSize, height: Self.iconSize)
-                .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
+        return layout {
+            if columns == nil { Spacer(minLength: 24) }
 
-            VStack(spacing: 28) {
-                Text("Let It Go")
-                    .font(.system(size: 36, weight: .bold))
-                    .shadow(color: Color(hex: 0x0E0F33).opacity(0.55), radius: 10, y: 3)
+            VStack(spacing: 0) {
+                AppIcon()
+                    .frame(width: iconSize, height: iconSize)
+                    .shadow(color: .indigoGlow.opacity(0.6), radius: 40, y: 12)
 
-                HStack(spacing: 8) {
-                    Text("Redirect go/ to")
-                        .foregroundStyle(.white.opacity(0.75))
-                    RedirectTargetField(value: $redirectBase)
+                VStack(spacing: 28) {
+                    Text("Let It Go")
+                        .font(.system(size: 36, weight: .bold))
+                        .shadow(color: Color(hex: 0x0E0F33).opacity(0.55), radius: 10, y: 3)
+
+                    HStack(spacing: 8) {
+                        Text("Redirect go/ to")
+                            .foregroundStyle(.white.opacity(0.75))
+                        RedirectTargetField(value: $redirectBase)
+                    }
+                    .font(.title3)
                 }
-                .font(.title3)
+                .padding(.top, 16)
             }
-            .padding(.top, 16)
+            .frame(width: columns?.width)
 
-            Spacer(minLength: 32)
+            if columns == nil { Spacer(minLength: 32) }
 
             GlassContainer(spacing: 12) {
                 VStack(alignment: .leading, spacing: 22) {
@@ -108,10 +121,14 @@ struct ContentView: View {
             // Narrower on small iPhones.
             .frame(maxWidth: 320, alignment: .leading)
             #endif
+            .frame(width: columns?.width)
 
-            Spacer(minLength: 28)
+            if columns == nil { Spacer(minLength: 28) }
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, columns == nil ? 32 : 0)
+        .padding(.leading, columns?.leading ?? 0)
+        .padding(.trailing, columns?.trailing ?? 0)
+        .padding(.vertical, columns == nil ? 0 : Columns.margin)
     }
 
     #if os(macOS)
@@ -120,6 +137,9 @@ struct ContentView: View {
     /// The Mac icon has a transparent margin around its artwork; this one doesn't.
     private static let iconSize: CGFloat = 92
     #endif
+
+    /// There's room for a larger icon when it has a column to itself.
+    private static let columnsIconSize: CGFloat = 112
 
     /// Mirrors Safari Settings on the Mac, and the extension's page in the
     /// Settings app on iOS, where the steps happen.
@@ -257,6 +277,60 @@ struct ContentView: View {
         openedSettings = true
         openSafariSettings()
     }
+}
+
+/// Where the header and the checklist go when they sit side by side: one on each
+/// side of the fold of an iPhone Duo's inner display.
+private struct Columns {
+    /// Both columns are as wide as the narrower side of the fold, which centers
+    /// the pair on the fold rather than in the safe area: the status bar, on one
+    /// side only, makes that lopsided.
+    var width: CGFloat
+    /// The fold, kept clear between the columns.
+    var gap: CGFloat
+    var leading: CGFloat
+    var trailing: CGFloat
+    /// The middle of the fold, which is the middle of the display. The safe area's
+    /// is higher: the home indicator shortens it at the bottom only.
+    var centerY: CGFloat
+
+    /// Above and below the columns when they're taller than what's visible and
+    /// scroll.
+    static let margin: CGFloat = 24
+
+    /// Where the columns' `center` guide has to be for their middle to land on
+    /// the display's, in a frame as tall as the safe area or as they are. They
+    /// stay inside that frame: with the keyboard up, the display's middle is
+    /// behind it.
+    func centerGuide(for columns: ViewDimensions, in safeHeight: CGFloat) -> CGFloat {
+        let frameHeight = max(safeHeight, columns.height)
+        let top = min(max(centerY - columns.height / 2, 0), frameHeight - columns.height)
+        return frameHeight / 2 - top
+    }
+
+    #if os(iOS)
+    /// `nil` unless a fold runs from the top to the bottom of the view, which is
+    /// only on the inner display of an iPhone Duo held in landscape. Everywhere
+    /// else, including that display in portrait, there's a single column.
+    init?(besideFoldIn proxy: GeometryProxy) {
+        guard #available(iOS 27.1, *), proxy.size.width > proxy.size.height else { return nil }
+        // The fold is inactive while the device lies fully open, and still where
+        // the columns should part.
+        let folds = proxy.reservedRegions(kind: .division, options: .includeInactive).map(\.frame)
+        guard let fold = folds.first(where: { $0.height > $0.width }) else { return nil }
+
+        let width = min(fold.minX, proxy.size.width - fold.maxX)
+        guard width >= Self.minimumWidth else { return nil }
+        self.width = width
+        gap = fold.width
+        leading = fold.minX - width
+        trailing = proxy.size.width - fold.maxX - width
+        centerY = fold.midY
+    }
+
+    /// The checklist, at its full width.
+    private static let minimumWidth: CGFloat = 320
+    #endif
 }
 
 /// The redirect target. Return or clicking away saves it, Escape (on the Mac)
