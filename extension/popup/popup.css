@@ -82,9 +82,11 @@ body {
       --edge: #b4b4db;
     }
 
-    /* Printed by scripts/eased-gradient.js, which explains the easing. The
-       lavender fades out over fixed lengths, so it stays short on the
-       short sheet. */
+    /* Linear stops change slope abruptly, which the eye sees as lines
+       (Mach bands), so these stops follow a smoothstep curve instead: the
+       color starts and stops changing gently. The lavender fades out over
+       fixed lengths, so it stays short on the short sheet, and the glows'
+       rims fade out the same way. */
     html body::before {
       background:
         linear-gradient(to bottom,
