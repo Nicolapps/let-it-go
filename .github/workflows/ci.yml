@@ -510,8 +510,9 @@ jobs:
           group="$APPLE_TEAM_ID.dev.ettlin.nicolas.letitgo"
           entitlements="$RUNNER_TEMP/macos.entitlements"
           plutil -create xml1 "$entitlements"
-          plutil -insert com.apple.security.app-sandbox -bool YES "$entitlements"
-          plutil -insert com.apple.security.application-groups -json "[\"$group\"]" "$entitlements"
+          # plutil takes a key path, so the dots in the keys are escaped.
+          plutil -insert 'com\.apple\.security\.app-sandbox' -bool YES "$entitlements"
+          plutil -insert 'com\.apple\.security\.application-groups' -json "[\"$group\"]" "$entitlements"
           plutil -p "$entitlements"
 
           # The app and the extension have the same entitlements; the extension goes first.
