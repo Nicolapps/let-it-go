@@ -91,6 +91,19 @@ upload-ios:
         -allowProvisioningUpdates
     @echo "Uploaded iOS build {{build_number}} ({{commit}})"
 
+# Capture the App Store screenshots of the iOS app in the simulator (names: iphone-large, iphone-medium, ipad-13, iphone-duo)
+app-store-screenshots *names:
+    scripts/app-store-screenshots.sh {{names}}
+
+# Render an App Store product page header as screenshots/headers/<name>-3840x1646.png (options: see scripts/app-store-header.swift)
+app-store-header name *options:
+    mkdir -p {{derived}} screenshots/headers
+    "$(xcode-select -p)/../Applications/Icon Composer.app/Contents/Executables/ictool" "Let It Go/Let It Go/AppIcon.icon" \
+        --export-image --output-file {{derived}}/app-store-icon.png \
+        --platform iOS --rendition Default --width 1024 --height 1024 --scale 2 >/dev/null
+    swiftc -parse-as-library -O scripts/app-store-header.swift -o {{derived}}/app-store-header
+    {{derived}}/app-store-header {{derived}}/app-store-icon.png "screenshots/headers/{{name}}-3840x1646.png" {{options}}
+
 # Upload the code-signing and notarization secrets so CI publishes signed releases
 setup-signing:
     scripts/setup-signing-secrets.sh
