@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- Copied in extension/popup/popup.html for the Safari extension: keep both copies in sync. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- On iPhone, lets the page draw under the sheet's safe areas, so the
+       gradient reaches its edges; popup.css keeps the content out of them. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Let It Go</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <main>
+    <img class="icon" src="../icons/icon-256.png" alt="">
+    <h1>Let It Go</h1>
+    <label class="redirect">
+      <span>Redirect go/ to</span>
+      <span class="field">
+        <input id="redirect-base" type="text" placeholder="http://go" spellcheck="false" autocomplete="off" autocapitalize="off">
+        <span id="feedback" aria-live="polite"></span>
+      </span>
+    </label>
+  </main>
+  <script src="settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

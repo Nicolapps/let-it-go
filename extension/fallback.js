@@ -1,3 +1,5 @@
+// Copied in chrome/fallback.js for the Chrome extension: keep both copies in sync.
+
 // Catches the go/ searches that rules.json can't redirect: links deeper than
 // its rules go, or with other encoded characters, e.g. go/foo?x=1, which
 // arrives as q=go%2Ffoo%3Fx%3D1 and needs decoding first.

@@ -44,10 +44,29 @@ lint:
     node --check extension/fallback.js
     node --check extension/background.js
     node --check extension/popup/popup.js
+    node --check extension/popup/settings.js
+    jq empty chrome/manifest.json
+    test "$(jq -r .version extension/manifest.json)" = "$(jq -r .version chrome/manifest.json)" \
+        || { echo "extension/manifest.json and chrome/manifest.json have different versions"; exit 1; }
+    node --check chrome/fallback.js
+    node --check chrome/background.js
+    node --check chrome/popup/popup.js
+    node --check chrome/popup/settings.js
     node -e 'for (const r of require("./extension/rules.json")) new RegExp(r.condition.regexFilter)'
     node scripts/generate-rules.js --check
 
-# Regenerate extension/rules.json from scripts/generate-rules.js
+# Zip the Chrome extension for the Chrome Web Store
+package-chrome:
+    mkdir -p {{derived}}
+    rm -f {{derived}}/let-it-go-chrome.zip
+    cd chrome && zip -qr ../{{derived}}/let-it-go-chrome.zip . -x '.*'
+    @echo "Packaged {{derived}}/let-it-go-chrome.zip"
+
+# Render the Chrome Web Store images from store/chrome/store.html (needs Playwright)
+store-images:
+    node scripts/render-store-images.js
+
+# Regenerate extension/rules.json and chrome/rules.json from scripts/generate-rules.js
 rules:
     node scripts/generate-rules.js
 

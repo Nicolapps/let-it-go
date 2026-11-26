@@ -1,0 +1,643 @@
+<!doctype html>
+<!-- The Chrome Web Store images, one scene per ?scene=, in the website's
+     visual language (site/index.html): the app icon's gradient, soft snow, a
+     big white title and a browser window. `just store-images` renders them. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Let It Go store images</title>
+  <style>
+    :root {
+      --text: #fff;
+      --label: rgb(255 255 255 / 0.75);
+      --shadow: 14 15 51;
+      --accent: #66d4cf;
+      --background:
+        radial-gradient(60% 45% at 50% 40%, rgb(106 106 184 / 0.95), transparent),
+        radial-gradient(55% 45% at 100% 100%, rgb(192 112 184 / 0.85), transparent),
+        radial-gradient(50% 40% at 0% 100%, rgb(111 128 194 / 0.7), transparent),
+        radial-gradient(45% 35% at 50% 100%, rgb(106 63 152 / 0.8), transparent),
+        linear-gradient(to bottom, #0e0f33, #1d1c5c 45%, #3b2d84);
+
+      /* The browser window: a light Chrome-like window, as on the site. */
+      --frame: #dfe3ea;
+      --toolbar: #fff;
+      --omnibox: #eef1f5;
+      --separator: #d3d7de;
+      --icon: #4a4f57;
+      --page: #f6f7f9;
+      --ink: #1f1f24;
+      --muted: #6b7079;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      position: relative;
+      overflow: hidden;
+      color: var(--text);
+      background: #0e0f33;
+      font: 17px/1.4 -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--background);
+    }
+
+    #snow {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .scene {
+      position: relative;
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .scene.active { display: flex; }
+
+    .icon {
+      filter:
+        drop-shadow(0 1px 2px rgb(var(--shadow) / 0.3))
+        drop-shadow(0 12px 24px rgb(var(--shadow) / 0.4));
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-shadow: 0 1px 2px rgb(var(--shadow) / 0.2), 0 2px 16px rgb(var(--shadow) / 0.2);
+    }
+
+    .tagline {
+      margin: 0;
+      color: var(--label);
+      text-wrap: balance;
+    }
+
+    .nowrap { white-space: nowrap; }
+
+    code {
+      font: 0.95em "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+      font-variant-ligatures: none;
+    }
+
+    /* MARK: Browser window */
+
+    .window {
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 14px;
+      background: var(--page);
+      box-shadow:
+        0 0 0 0.5px rgb(0 0 0 / 0.25),
+        0 4px 12px rgb(var(--shadow) / 0.2),
+        0 24px 60px rgb(var(--shadow) / 0.45);
+      color: var(--ink);
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 44px;
+      padding: 0 12px;
+      background: var(--frame);
+    }
+
+    .lights {
+      display: flex;
+      gap: 8px;
+      align-self: center;
+      margin: 0 14px 0 4px;
+    }
+
+    .lights span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.2);
+    }
+
+    .lights span:nth-child(1) { background: #ff5f57; }
+    .lights span:nth-child(2) { background: #febc2e; }
+    .lights span:nth-child(3) { background: #28c840; }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 230px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px 10px 0 0;
+      background: var(--toolbar);
+      color: var(--ink);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .tab .favicon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #6a6ab8, #c070b8);
+    }
+
+    .tab .close {
+      margin-left: auto;
+      color: var(--muted);
+    }
+
+    .new-tab {
+      align-self: center;
+      color: var(--icon);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .toolbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 50px;
+      padding: 0 14px;
+      background: var(--toolbar);
+      border-bottom: 1px solid var(--separator);
+      color: var(--icon);
+    }
+
+    .toolbar svg { flex-shrink: 0; }
+
+    .omnibox {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      gap: 10px;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--omnibox);
+      color: var(--muted);
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .omnibox.focused {
+      background: #fff;
+      box-shadow: 0 0 0 2px rgb(106 106 184 / 0.9);
+      color: var(--ink);
+    }
+
+    .caret {
+      display: inline-block;
+      width: 1.5px;
+      height: 18px;
+      margin-left: 1px;
+      vertical-align: -3px;
+      background: #6a6ab8;
+    }
+
+    .omnibox .host { color: var(--ink); }
+
+    .extension-button {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .extension-button.open { background: #e4e6f2; }
+
+    .extension-button img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #66d4cf, #6f80c2);
+    }
+
+    /* A go-link page: a sketch of a team's standup doc, in greys. */
+    .page {
+      padding: 36px 48px;
+    }
+
+    .page .heading {
+      margin: 0 0 6px;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .page .meta {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .line {
+      height: 12px;
+      margin: 0 0 14px;
+      border-radius: 6px;
+      background: #e2e5ea;
+    }
+
+    /* MARK: Scenes */
+
+    /* 1. Hero: icon, title and a window with a go/ link typed in. */
+    #hero {
+      flex-direction: column;
+      align-items: center;
+      padding-top: 84px;
+      text-align: center;
+    }
+
+    #hero .icon { width: 132px; height: 132px; margin: -8px; }
+    #hero h1 { margin-top: 34px; font-size: 68px; }
+    #hero .tagline { margin-top: 16px; font-size: 26px; }
+    #hero .window { width: 1040px; height: 420px; margin-top: 64px; }
+
+    /* 2. Before and after: type a go/ link, land on the page. */
+    .headline {
+      flex-direction: column;
+      align-items: center;
+      padding-top: 72px;
+      text-align: center;
+    }
+
+    .headline h2 { font-size: 52px; }
+    .headline .tagline { max-width: 960px; margin-top: 16px; font-size: 23px; }
+
+    #redirect .row {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    #redirect .window { width: 520px; height: 420px; }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgb(160 150 255 / 0.24);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 0 0 1px rgb(255 255 255 / 0.25);
+    }
+
+    .key {
+      display: inline-flex;
+      align-items: center;
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #eef1f5;
+      box-shadow: 0 1px 0 #c8ccd4;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* The omnibox's suggestion list under the focused field. */
+    .suggestions {
+      position: absolute;
+      top: 7px;
+      left: 104px;
+      right: 100px;
+      padding: 44px 0 8px;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 0 0 2px rgb(106 106 184 / 0.9), 0 10px 30px rgb(0 0 0 / 0.15);
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .suggestion {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+    }
+
+    .suggestion.selected { background: #eef0fa; }
+    .suggestion .dim { color: var(--muted); }
+
+    .suggestions + .omnibox {
+      position: relative;
+      z-index: 1;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    /* 3. The popup, open from the toolbar. */
+    #popup .window { width: 1040px; height: 520px; margin-top: 56px; position: relative; }
+
+    .popup {
+      position: absolute;
+      top: 88px;
+      right: 52px;
+      width: 340px;
+      height: 226px;
+      overflow: hidden;
+      border: 0;
+      border-radius: 12px;
+      box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.3), 0 12px 40px rgb(var(--shadow) / 0.45);
+    }
+
+    /* 4. Where it works, and what it doesn't do. */
+    #engines { justify-content: center; padding: 0 0 24px; }
+
+    #engines .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 340px);
+      gap: 24px;
+      margin-top: 64px;
+      text-align: left;
+    }
+
+    .card {
+      padding: 30px 30px 32px;
+      border-radius: 24px;
+      background:
+        linear-gradient(rgb(255 255 255 / 0.08), transparent 60%),
+        rgb(160 150 255 / 0.18);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.18),
+        0 0 0 1px rgb(255 255 255 / 0.16),
+        0 12px 32px rgb(var(--shadow) / 0.25);
+    }
+
+    .card .glyph {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      background: rgb(255 255 255 / 0.14);
+      color: var(--accent);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 23px;
+      font-weight: 700;
+    }
+
+    .card code { white-space: nowrap; }
+
+    .card p {
+      margin: 0;
+      color: var(--label);
+      font-size: 17px;
+      line-height: 1.45;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pills span {
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgb(255 255 255 / 0.14);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Promo tiles: just the mark, the name and a line. */
+    .tile {
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+    }
+
+    #small .icon { width: 120px; height: 120px; margin: -6px; }
+    #small h1 { font-size: 40px; }
+    #small .tagline { margin-top: 10px; font-size: 19px; }
+
+    #marquee { justify-content: flex-start; gap: 56px; padding-left: 110px; }
+    #marquee .icon { width: 190px; height: 190px; margin: -10px; }
+    #marquee h1 { font-size: 72px; }
+    #marquee .tagline { margin-top: 18px; font-size: 28px; max-width: 480px; }
+    #marquee .window { position: absolute; left: 790px; top: 96px; width: 760px; height: 520px; }
+  </style>
+</head>
+<body>
+  <canvas id="snow" aria-hidden="true"></canvas>
+
+  <template id="toolbar-icons">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3m4.5-4.5L3 8l4.5 4.5"/></svg>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#b7bcc5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5"/></svg>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13.2 8.6A5.3 5.3 0 1 1 11.6 4.2M12.5 1.8v3h-3"/></svg>
+  </template>
+
+  <!-- 1280×800 screenshots -->
+
+  <section class="scene" id="hero">
+    <img class="icon" src="../../chrome/icons/icon-256.png" alt="">
+    <h1>Let It Go</h1>
+    <p class="tagline">Opens <code>go/</code> links instead of searching for them.</p>
+    <div class="window" data-tab="New Tab">
+      <div class="omnibox focused">
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="5" cy="5" r="4.2"/><path d="m8.1 8.1 3.1 3.1"/></svg>
+        <span>go/standup<span class="caret"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene headline" id="redirect">
+    <h2>Type it. Land there.</h2>
+    <p class="tagline">Chrome sends <code>go/standup</code> to your search engine. <span class="nowrap">Let It Go</span> catches it and opens <code>http://go/standup</code> instead.</p>
+    <div class="row">
+      <div class="window" data-tab="New Tab">
+        <div class="suggestions">
+          <div class="suggestion selected">
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="5" cy="5" r="4.2"/><path d="m8.1 8.1 3.1 3.1"/></svg>
+            <span>go/standup <span class="dim">– Search</span></span>
+          </div>
+          <div class="suggestion"><span class="dim">go/standup/notes</span></div>
+          <div class="suggestion"><span class="dim">go/stats</span></div>
+        </div>
+        <div class="omnibox focused">
+          <span>go/standup<span class="caret"></span></span>
+          <span class="key">return ⏎</span>
+        </div>
+      </div>
+      <div class="arrow">
+        <svg width="26" height="26" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </div>
+      <div class="window" data-tab="Standup" data-url="go/standup">
+        <div class="page">
+          <p class="heading">Daily standup</p>
+          <p class="meta">Notes and links for the team</p>
+          <div class="line" style="width: 92%"></div>
+          <div class="line" style="width: 78%"></div>
+          <div class="line" style="width: 85%"></div>
+          <div class="line" style="width: 60%"></div>
+          <div class="line" style="width: 88%; margin-top: 28px"></div>
+          <div class="line" style="width: 70%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene headline" id="popup">
+    <h2>Bring your own go-link server</h2>
+    <p class="tagline">Links go to <code>http://go</code> by default. Point them anywhere from the toolbar.</p>
+    <div class="window" data-tab="New Tab" data-extension="open">
+      <div class="page">
+        <div class="line" style="width: 40%; height: 18px; margin-top: 140px; margin-left: 30%"></div>
+        <div class="line" style="width: 56%; height: 40px; border-radius: 20px; margin-left: 22%"></div>
+      </div>
+      <iframe class="popup" src="popup-frame.html?base=go.example.com"></iframe>
+    </div>
+  </section>
+
+  <section class="scene headline" id="engines">
+    <h2>Works where you search</h2>
+    <p class="tagline">Light, private and out of the way.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="glyph">
+          <svg width="24" height="24" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="5" cy="5" r="4.2"/><path d="m8.1 8.1 3.1 3.1"/></svg>
+        </div>
+        <h3>Your search engine</h3>
+        <p>Catches <code>go/</code> searches on</p>
+        <div class="pills"><span>Google</span><span>Bing</span><span>DuckDuckGo</span><span>Yahoo</span><span>Ecosia</span></div>
+      </div>
+      <div class="card">
+        <div class="glyph">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5 13.5 6.5 6 14H2v-4z"/><path d="m8 4 4 4"/></svg>
+        </div>
+        <h3>Deep links too</h3>
+        <p><code>go/docs/onboarding</code> and <code>go/q?id=42</code> open just like <code>go/docs</code>, with every path and query kept.</p>
+      </div>
+      <div class="card">
+        <div class="glyph">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="10" height="7.5" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+        </div>
+        <h3>Nothing collected</h3>
+        <p>No analytics, no accounts. Other searches are left alone, and your setting stays in your browser.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 440×280 small promo tile -->
+  <section class="scene tile" id="small">
+    <img class="icon" src="../../chrome/icons/icon-256.png" alt="">
+    <div>
+      <h1>Let It Go</h1>
+      <p class="tagline">Opens <code>go/</code> links</p>
+    </div>
+  </section>
+
+  <!-- 1400×560 marquee promo tile -->
+  <section class="scene tile" id="marquee">
+    <img class="icon" src="../../chrome/icons/icon-256.png" alt="">
+    <div>
+      <h1>Let It Go</h1>
+      <p class="tagline">Opens <code>go/</code> links instead of searching for them.</p>
+    </div>
+    <div class="window" data-tab="Standup" data-url="go/standup">
+      <div class="page">
+        <p class="heading">Daily standup</p>
+        <p class="meta">Notes and links for the team</p>
+        <div class="line" style="width: 92%"></div>
+        <div class="line" style="width: 78%"></div>
+        <div class="line" style="width: 85%"></div>
+        <div class="line" style="width: 60%"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Same seed every time, so re-rendering gives the same snow.
+    let seed = 7;
+    const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+
+    const scene = new URLSearchParams(location.search).get("scene") || "hero";
+    document.getElementById(scene).classList.add("active");
+
+    // MARK: Windows
+
+    // Builds each window's tab strip and toolbar. data-url shows a loaded
+    // page's address; otherwise the window's own omnibox, if any, is used.
+    const toolbarIcons = document.getElementById("toolbar-icons").innerHTML;
+    for (const window of document.querySelectorAll(".active .window")) {
+      const { tab, url, extension } = window.dataset;
+      const ownOmnibox = window.querySelector(":scope > .omnibox");
+      const suggestions = window.querySelector(":scope > .suggestions");
+      const chrome = document.createElement("div");
+      chrome.innerHTML = `
+        <div class="tabs">
+          <div class="lights"><span></span><span></span><span></span></div>
+          <div class="tab"><span class="favicon"></span><span>${tab}</span><span class="close">×</span></div>
+          <span class="new-tab">+</span>
+        </div>
+        <div class="toolbar">
+          ${toolbarIcons}
+          ${url ? `<div class="omnibox">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 5h5.5M11.5 5H14M2 11h2.5M8.5 11H14"/><circle cx="9.5" cy="5" r="2"/><circle cx="6.5" cy="11" r="2"/></svg>
+              <span class="host">${url}</span>
+            </div>` : ""}
+          <span class="extension-button ${extension === "open" ? "open" : ""}"><img src="../../chrome/icons/icon-48.png" alt=""></span>
+          <span class="avatar"></span>
+        </div>`;
+      const toolbar = chrome.querySelector(".toolbar");
+      if (ownOmnibox) toolbar.insertBefore(ownOmnibox, toolbar.querySelector(".extension-button"));
+      if (!url && !ownOmnibox) {
+        const empty = document.createElement("div");
+        empty.className = "omnibox";
+        empty.textContent = "Search Google or type a URL";
+        toolbar.insertBefore(empty, toolbar.querySelector(".extension-button"));
+      }
+      if (suggestions) toolbar.insertBefore(suggestions, toolbar.querySelector(".omnibox"));
+      window.prepend(...chrome.children);
+    }
+
+    // MARK: Snow
+
+    // A single frame of the site's snowfall.
+    const canvas = document.getElementById("snow");
+    const context = canvas.getContext("2d");
+    const scale = devicePixelRatio;
+    canvas.width = canvas.clientWidth * scale;
+    canvas.height = canvas.clientHeight * scale;
+    context.scale(scale, scale);
+    const count = Math.round((canvas.clientWidth * canvas.clientHeight) / 14000);
+    for (let i = 0; i < count; i++) {
+      const size = 1.5 + random() * 2.5;
+      context.beginPath();
+      context.arc(random() * canvas.clientWidth, random() * canvas.clientHeight, size / 2, 0, Math.PI * 2);
+      context.fillStyle = `rgb(255 255 255 / ${0.15 + random() * 0.4})`;
+      context.fill();
+    }
+  </script>
+</body>
+</html>

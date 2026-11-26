@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Writes extension/rules.json: one rule per search engine and go/ link depth.
+// Writes extension/rules.json and its copy for the Chrome extension,
+// chrome/rules.json: one rule per search engine and go/ link depth.
 //
 // Redirect rules can't decode the query, so go/foo/bar arrives as
 // q=go%2Ffoo%2Fbar and a single capture would stop at the second %2F. Instead,
@@ -7,7 +8,7 @@
 // slashes back in the target. Deeper links and other encoded characters are
 // left to fallback.js.
 //
-// Run with --check to fail instead of writing when rules.json is stale.
+// Run with --check to fail instead of writing when either copy is stale.
 
 const fs = require("fs");
 const path = require("path");
@@ -41,14 +42,16 @@ for (const engine of ENGINES) {
   }
 }
 
-const file = path.join(__dirname, "..", "extension", "rules.json");
 const json = JSON.stringify(rules, null, 2) + "\n";
 
-if (process.argv.includes("--check")) {
-  if (fs.readFileSync(file, "utf8") !== json) {
-    console.error("extension/rules.json is out of date; run `just rules`.");
-    process.exit(1);
+for (const file of ["extension/rules.json", "chrome/rules.json"]) {
+  const fullPath = path.join(__dirname, "..", file);
+  if (process.argv.includes("--check")) {
+    if (fs.readFileSync(fullPath, "utf8") !== json) {
+      console.error(`${file} is out of date; run \`just rules\`.`);
+      process.exitCode = 1;
+    }
+  } else {
+    fs.writeFileSync(fullPath, json);
   }
-} else {
-  fs.writeFileSync(file, json);
 }
